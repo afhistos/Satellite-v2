@@ -75,7 +75,7 @@ public class Satellite implements Runnable{
                 +TextColor.BRIGHT_BLUE+ BotUtils.getTimestamp(loadedTime - st, true)+"\nConnexion à la base de données: "+
                 (useSQL ? "Réussie": "Échec"), true, false);
     }
-
+// test
     public static SQLUtils getSqlInstance() {
         return sqlUtils.getInstance();
     }
