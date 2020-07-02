@@ -2,18 +2,19 @@ package be.afhistos.satellitev2;
 
 import be.afhistos.satellitev2.consoleUtils.LogLevel;
 import be.afhistos.satellitev2.consoleUtils.TextColor;
-import be.afhistos.satellitev2.database.QueryResult;
 import net.dv8tion.jda.api.Permission;
 
-import javax.management.*;
+import javax.management.Attribute;
+import javax.management.AttributeList;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import java.awt.*;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.TimeZone;
 
 public class BotUtils {
     public static String WHITE_CHECK_MARK = "\\u2705";
@@ -102,42 +103,6 @@ public class BotUtils {
         sb.append("Mémoire disponible: ").append(run.freeMemory() / mb).append(" Mb\n");
         sb.append("Mémoire utilisée: ").append((run.totalMemory() - run.freeMemory()) / mb).append(" Mb\n");
         sb.append("Mémoire maximale: ").append(run.maxMemory() / mb).append(" Mb\n");
-
-        /* Bandwidth usage
-         * Since we cannot get bw usage via pure java, getting the values from a python program that runs on the hosting machine
-         * And getting it through a database
-         * Due to security reasons, the database isn't accessible from others machines.
-         * So We first need to check if we can use database
-         */
-        sb.append("\nUtilisation de la bande passante: ");
-        if(Satellite.useSQL()){
-            String rawDl = null, rawUl = null;
-            try{
-                QueryResult qr = Satellite.getSqlInstance().execute("SELECT * FROM `general`");
-                ResultSet r = qr.getResult();
-                if(r.next()){
-                    rawDl = r.getString("download");
-                    rawUl = r.getString("upload");
-                }
-                qr.close();
-            }catch (Exception e){e.printStackTrace();}
-            if(rawDl.length() < 7){//Display the value in Kb
-                dl = df.format(Double.parseDouble(rawDl) / 1024.0) + " Kbps";
-            }else{//Display the value in Mb
-                dl = df.format(Double.parseDouble(rawDl) / 1024.0 / 1024.0) + " Mbps";
-            }
-            if(rawUl.length() < 7){//Display the value in Ko
-                ul = df.format(Double.parseDouble(rawUl) / 1024.0) + " Kbps";
-            }else{
-                ul = df.format(Double.parseDouble(rawUl) / 1024.0 / 1024.0) + " Mbps";
-            }
-            if(dl.startsWith(".")){dl = "0"+dl;}
-            if(ul.startsWith(".")){ul = "0"+ul;}
-            sb.append("↓").append(dl).append("   ↑").append(ul)
-                    .append("\n __Notez que la mise à jour de la bande passante s'effectue toute les 15 secondes.__");
-        }else{
-            sb.append("Données indisponibles.");
-        }
         return sb.toString();
     }
 

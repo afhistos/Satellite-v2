@@ -4,11 +4,11 @@ import be.afhistos.satellitev2.consoleUtils.TextColor;
 
 public enum LogLevel {
     INFO("Info"),
-    WARNING("Warning"),
-    ERROR("Error"),
-    SYSTEM("System"),
-    CONFIG("Config"),
-    UNKNOWN("Unknown");
+    WARNING("Avertissement"),
+    ERROR("Erreur"),
+    SYSTEM("Système"),
+    CONFIG("Configuration"),
+    UNKNOWN("Inconnu");
 
     private final String key;
     LogLevel(String key){this.key = key;}

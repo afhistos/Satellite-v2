@@ -5,7 +5,6 @@ import be.afhistos.satellitev2.commands.*;
 import be.afhistos.satellitev2.commands.music.*;
 import be.afhistos.satellitev2.consoleUtils.LogLevel;
 import be.afhistos.satellitev2.consoleUtils.TextColor;
-import be.afhistos.satellitev2.database.SQLUtils;
 import be.afhistos.satellitev2.listeners.CommandWatcher;
 import be.afhistos.satellitev2.listeners.DiscordEventListener;
 import com.jagrosh.jdautilities.command.CommandClient;
@@ -28,11 +27,10 @@ import java.util.LinkedList;
 
 public class Satellite implements Runnable{
 
-    private static boolean running, useSQL;
+    private static boolean running;
     private static final CommandClientBuilder builder = new CommandClientBuilder();
     private static CommandClient client;
     private static JDA bot;
-    private static SQLUtils sqlUtils;
     private long loadedTime;
     private final EventWaiter waiter;
 
@@ -42,11 +40,10 @@ public class Satellite implements Runnable{
         BotUtils.CAT_PERMISSIONS_DENY =  new LinkedList<>();
         BotUtils.CAT_PERMISSIONS_DENY.add(Permission.VIEW_CHANNEL);
         builder.setStatus(OnlineStatus.IDLE).setPrefix("²");
-        builder.addCommands(new CommandSql(), new CommandMonitoring(), new CommandStopBot(), new CommandConfinement()
-                , new CommandSetup());
+        builder.addCommands(new CommandMonitoring(), new CommandStopBot(), new CommandConfinement());
         builder.addCommands(new CommandBassBoost(), new CommandPlay(),new CommandVolume(),new CommandNowPlaying(),
                 new CommandPlaylist(waiter), new CommandStopMusic(), new CommandSkip(), new CommandShuffle(),
-                new CommandLoop(), new CommandJump(), new CommandPause(),new CommandClearPlaylist());
+                new CommandLoop(), new CommandJump(), new CommandPause(),new CommandClearPlaylist(), new CommandAutoRole());
         builder.setOwnerId("279597100961103872").setCoOwnerIds("225261996709380106");
         builder.setEmojis("\u2705", "\u26a0", "\u274c");
         builder.useHelpBuilder(true).setListener(new CommandWatcher());
@@ -63,25 +60,9 @@ public class Satellite implements Runnable{
         running = true;
         bot.getPresence().setStatus(OnlineStatus.ONLINE);
         bot.getPresence().setActivity(Activity.watching("Lego Ninjago"));
-        BotUtils.log(LogLevel.INFO, "Connexion à la base de données...", true, true);
-        sqlUtils = new SQLUtils(StartHandler.getProperties());
-        if(sqlUtils.getInstance() == null){
-            useSQL = false;
-        }else{
-            useSQL = sqlUtils.getInstance().execute("SELECT working FROM test").getResult().next();
-        }
         loadedTime = System.currentTimeMillis();
         BotUtils.log(LogLevel.INFO, "Le bot est prêt à l'utilisation.\n"+TextColor.BRIGHT_CYAN+"Temps de chargement: "
-                +TextColor.BRIGHT_BLUE+ BotUtils.getTimestamp(loadedTime - st, true)+"\nConnexion à la base de données: "+
-                (useSQL ? "Réussie": "Échec"), true, false);
-    }
-// test
-    public static SQLUtils getSqlInstance() {
-        return sqlUtils.getInstance();
-    }
-
-    public static boolean useSQL() {
-        return useSQL;
+                +TextColor.BRIGHT_BLUE+ BotUtils.getTimestamp(loadedTime - st, true), true, false);
     }
 
     @Override

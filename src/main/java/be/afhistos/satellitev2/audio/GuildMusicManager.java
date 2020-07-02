@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.managers.AudioManager;
 
 public class GuildMusicManager {
     public final AudioPlayer player;
-    public final EmbeddedMultimediaPlayer embeddedPlayer;
+    //public final EmbeddedMultimediaPlayer embeddedPlayer;
     public final TrackScheduler scheduler;
     public final EqualizerFactory equalizer;
     private boolean bassActive;
