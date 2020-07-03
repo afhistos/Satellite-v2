@@ -40,7 +40,7 @@ public class Satellite implements Runnable{
         BotUtils.CAT_PERMISSIONS_DENY =  new LinkedList<>();
         BotUtils.CAT_PERMISSIONS_DENY.add(Permission.VIEW_CHANNEL);
         builder.setStatus(OnlineStatus.IDLE).setPrefix("²");
-        builder.addCommands(new CommandMonitoring(), new CommandStopBot(), new CommandConfinement());
+        builder.addCommands(new CommandMonitoring(), new CommandStopBot(), new CommandConfinement(), new CommandSendToClient());
         builder.addCommands(new CommandBassBoost(), new CommandPlay(),new CommandVolume(),new CommandNowPlaying(),
                 new CommandPlaylist(waiter), new CommandStopMusic(), new CommandSkip(), new CommandShuffle(),
                 new CommandLoop(), new CommandJump(), new CommandPause(),new CommandClearPlaylist(), new CommandAutoRole());

@@ -12,19 +12,16 @@ import java.net.Socket;
 
 public class GanyServerThread extends Thread {
 
-    private boolean linked = false;
+    private boolean linked = false, poweringOff = false;
     private PrintWriter out = null;
     private BufferedReader in = null;
     private ServerSocket socket= null;
     private Socket clientSocket = null;
 
-    public GanyServerThread(){
-
-    }
+    public GanyServerThread(){}
 
     @Override
     public void run() {
-        super.run();
          socket = null;
         try{
             socket = new ServerSocket(2310);
@@ -52,8 +49,9 @@ public class GanyServerThread extends Thread {
         }
         String inputLine, outputLine;
         outputLine = "ConnTest";
+        System.out.println(outputLine);
         out.println(outputLine);
-        while(true){
+        while (!poweringOff) {
             try {
                 if (((inputLine = in.readLine()) != null)) {
                     treat(inputLine);
@@ -64,8 +62,16 @@ public class GanyServerThread extends Thread {
         }
     }
 
-    @Override
-    public void interrupt() {
+    private void treat(String s) {
+        if(s.equals("ConnTestTrue")){
+            linked = true;
+            BotUtils.log(LogLevel.INFO, "Test de connexion accepté.", true, false);
+            return;
+        }
+    }
+
+    public void shutdown(){
+        poweringOff = true;
         try {
             in.close();
             out.close();
@@ -77,14 +83,6 @@ public class GanyServerThread extends Thread {
             e.printStackTrace();
         }
         BotUtils.log(LogLevel.INFO, "Serveur éteint", true, false);
-    }
-
-    private void treat(String s) {
-        if(s.equals("ConnTestTrue")){
-            linked = true;
-            BotUtils.log(LogLevel.INFO, "Test de connexion accepté.", true, false);
-            return;
-        }
     }
 
     public boolean isLinked() {
