@@ -18,6 +18,10 @@ public class GanyServerThread extends Thread {
     private ServerSocket socket= null;
     private Socket clientSocket = null;
 
+    public GanyServerThread(){
+
+    }
+
     @Override
     public void run() {
         super.run();
@@ -73,7 +77,6 @@ public class GanyServerThread extends Thread {
             e.printStackTrace();
         }
         BotUtils.log(LogLevel.INFO, "Serveur éteint", true, false);
-        super.interrupt();
     }
 
     private void treat(String s) {
@@ -82,6 +85,14 @@ public class GanyServerThread extends Thread {
             BotUtils.log(LogLevel.INFO, "Test de connexion accepté.", true, false);
             return;
         }
+    }
+
+    public boolean isLinked() {
+        return linked;
+    }
+
+    public void send(String s){
+        out.println(s);
     }
 
 

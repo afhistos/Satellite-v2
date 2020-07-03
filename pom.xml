@@ -6,7 +6,7 @@
 
     <groupId>be.afhistos</groupId>
     <artifactId>Satellite-v2</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.5.2</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

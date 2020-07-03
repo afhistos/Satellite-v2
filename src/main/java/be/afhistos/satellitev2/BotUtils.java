@@ -2,6 +2,7 @@ package be.afhistos.satellitev2;
 
 import be.afhistos.satellitev2.consoleUtils.LogLevel;
 import be.afhistos.satellitev2.consoleUtils.TextColor;
+import be.afhistos.satellitev2.server.GanyServerThread;
 import net.dv8tion.jda.api.Permission;
 
 import javax.management.Attribute;
@@ -105,7 +106,6 @@ public class BotUtils {
         sb.append("Mémoire maximale: ").append(run.maxMemory() / mb).append(" Mb\n");
         return sb.toString();
     }
-
     public static Color getDefaultColor() {
         return new Color(50,50,175);
     }

@@ -12,6 +12,7 @@ import java.util.Properties;
 
 public class StartHandler {
     private static long startTime;
+    private static GanyServerThread serverInstance;
     private static Properties props = new Properties();
     private static File logFile, dataFile;
     private static Writer logWriter = null, dataWriter = null;
@@ -44,7 +45,8 @@ public class StartHandler {
         mainThread.start();
         consoleThread = new ConsoleThread();
         consoleThread.start();
-        ganyServerThread = new GanyServerThread();
+        serverInstance = new GanyServerThread();
+        ganyServerThread = serverInstance;
         ganyServerThread.start();
 
     }
@@ -81,5 +83,9 @@ public class StartHandler {
 
     public static Thread getServerThread() {
         return ganyServerThread;
+    }
+
+    public static GanyServerThread getServerInstance() {
+        return serverInstance;
     }
 }
