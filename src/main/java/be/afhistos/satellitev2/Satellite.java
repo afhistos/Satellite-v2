@@ -76,7 +76,6 @@ public class Satellite implements Runnable{
                 }
             }else{
                 Thread t = new Thread(new ShutdownBot());
-                t.setPriority(1);
                 t.start();
             }
         }

@@ -40,14 +40,15 @@ public class StartHandler {
             }
         }
         dataWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dataFile), "UTF-8"));
-        Satellite satellite = new Satellite(startTime, new EventWaiter());
-        mainThread = new Thread(satellite, "Satellite-Thread");
+        BotUtils.log(LogLevel.INFO,"Démarrage des threads nécessaires...", true, true);
         mainThread.start();
         consoleThread = new ConsoleThread();
         consoleThread.start();
-        serverInstance = new GanyServerThread();
-        ganyServerThread = serverInstance;
+        serverInstance = new GanyServerThread(2310);
+        ganyServerThread = new Thread(serverInstance);
         ganyServerThread.start();
+        Satellite satellite = new Satellite(startTime, new EventWaiter());
+        mainThread = new Thread(satellite, "Satellite-Thread");
 
     }
 

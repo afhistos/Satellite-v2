@@ -3,95 +3,126 @@ package be.afhistos.satellitev2.server;
 import be.afhistos.satellitev2.BotUtils;
 import be.afhistos.satellitev2.consoleUtils.LogLevel;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Stream;
 
-public class GanyServerThread extends Thread {
+public class GanyServerThread implements Runnable {
 
-    private boolean linked = false, poweringOff = false;
-    private PrintWriter out = null;
-    private BufferedReader in = null;
-    private ServerSocket socket= null;
-    private Socket clientSocket = null;
+    private Map<Integer, WorkerRunnable> clients = new HashMap<Integer, WorkerRunnable>();
 
-    public GanyServerThread(){}
+    private int serverPort = 5656;
+    private ServerSocket serverSocket = null;
+    private boolean isStopped = false;
+    private Thread runningThread = null;
 
-    @Override
+    public GanyServerThread(int port){
+        this.serverPort = port;
+    }
+
     public void run() {
-         socket = null;
-        try{
-            socket = new ServerSocket(2310);
-        } catch (IOException e) {
-            BotUtils.log(LogLevel.SYSTEM,"Impossible d'écouter le port 2310 ! Arrêt du système...", true, true);
-            return;
-        }
-        BotUtils.log(LogLevel.INFO,"En attente de connexion...", true,false);
-        try{
-            clientSocket = socket.accept();
-        } catch (IOException e) {
-            BotUtils.log(LogLevel.SYSTEM, "Échec de l'autorisation de connexion. Arrêt du système...", true,true);
-            return;
-        }
-        BotUtils.log(LogLevel.INFO, "Connexion reçue de "+clientSocket.getInetAddress().getHostAddress()+
-                ":"+clientSocket.getPort(), true, true);
+         synchronized (this){
+             this.runningThread = Thread.currentThread();
+         }
+         openServerSocket();
+         while(!isStopped){
+             Socket clientSocket = null;
+             try{
+                 clientSocket = this.serverSocket.accept();
+             } catch (IOException e) {
+                 if(isStopped){
+                     BotUtils.log(LogLevel.INFO, "Serveur de données éteint", true, true);
+                     return;
+                 }
+                 BotUtils.log(LogLevel.ERROR, "Une erreur est survenue lors de la connexion d'un client", true,true);
+             }
+             WorkerRunnable worker = new WorkerRunnable(clientSocket);
+             clients.put(clientSocket.getPort(), worker);
+             new Thread(worker,"Multithreaded server connection").start();
+         }
+         BotUtils.log(LogLevel.INFO, "Serveur de données éteint", true, true);
+    }
 
-        try{
-            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            out = new PrintWriter(clientSocket.getOutputStream(), true);
-        } catch (IOException e) {
-            BotUtils.log(LogLevel.ERROR, "Une erreur est survenue lors de l'initialisation des canaux de communication."
-                +"Arrêt du système...", true,true);
-            return;
-        }
-        String inputLine, outputLine;
-        outputLine = "ConnTest";
-        System.out.println(outputLine);
-        out.println(outputLine);
-        while (!poweringOff) {
+    /**
+     *
+     * @return true if server isn't running anymore
+     */
+    public boolean isStopped() {
+        return isStopped;
+    }
+
+    public synchronized void stop() {
+        this.isStopped=  true;
+        getClientsStream().forEach(client -> {
             try {
-                if (((inputLine = in.readLine()) != null)) {
-                    treat(inputLine);
+                client.getClientSocket().close();
+            } catch (IOException e) {
+                if(!client.getClientSocket().isClosed()){
+                    BotUtils.log(LogLevel.ERROR, "Impossible de fermer la connexion avec le client "+
+                            client.getClientSocket().getInetAddress().getCanonicalHostName(), true, true);
                 }
+            }
+        });
+        try{
+            this.serverSocket.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Erreur lors de la fermeture du serveur de données", e);
+        }
+    }
+
+    /**
+     *
+     * @param s the String to send to all clients
+     */
+    public void sendToClients(String s){
+        getClientsStream().forEach(client ->{
+            client.sendToClient(s);
+        });
+    }
+
+    public void sendToClient(int port, String s){
+        getClientsStream().filter(workerRunnable -> workerRunnable.getClientSocket().getPort() == port)
+                .forEach(workerRunnable -> { workerRunnable.sendToClient(s);
+        });
+
+    }
+
+    public void removeClient(int clientPort){
+        WorkerRunnable worker = clients.remove(clientPort);
+        if(worker == null){
+            return; //Can't find the client Thread, already disconnected / never logged in
+        }
+        //check if the socked is closed
+        if(worker.getClientSocket().isConnected() || !worker.getClientSocket().isClosed()){
+            try {
+                worker.getClientSocket().close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+
     }
 
-    private void treat(String s) {
-        if(s.equals("ConnTestTrue")){
-            linked = true;
-            BotUtils.log(LogLevel.INFO, "Test de connexion accepté.", true, false);
-            return;
-        }
-    }
-
-    public void shutdown(){
-        poweringOff = true;
-        try {
-            in.close();
-            out.close();
-            if (clientSocket.isConnected()) {
-                clientSocket.close();
-            }
-            socket.close();
+    private void openServerSocket(){
+        try{
+            this.serverSocket = new ServerSocket(this.serverPort);
         } catch (IOException e) {
-            e.printStackTrace();
+            BotUtils.log(LogLevel.ERROR, "Impossible d'ouvrir le serveur sur le port "+this.serverPort, true,true);
         }
-        BotUtils.log(LogLevel.INFO, "Serveur éteint", true, false);
     }
 
-    public boolean isLinked() {
-        return linked;
+    /**
+     *
+     * @return a stream of all connected clients
+     */
+    public Stream<WorkerRunnable> getClientsStream(){
+         return clients.entrySet().stream().map(Map.Entry::getValue);
     }
 
-    public void send(String s){
-        out.println(s);
-    }
+
 
 
 

@@ -19,6 +19,6 @@ public class CommandSendToClient extends Command {
             event.reactError();
             return;
         }
-        StartHandler.getServerInstance().send(event.getArgs());
+        StartHandler.getServerInstance().sendToClients(event.getArgs());
     }
 }
