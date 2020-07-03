@@ -45,6 +45,7 @@ public class StartHandler {
         consoleThread = new ConsoleThread();
         consoleThread.start();
         ganyServerThread = new GanyServerThread();
+        ganyServerThread.start();
 
     }
 
@@ -76,5 +77,9 @@ public class StartHandler {
 
     public static Writer getDataWriter() {
         return dataWriter;
+    }
+
+    public static Thread getServerThread() {
+        return ganyServerThread;
     }
 }

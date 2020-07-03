@@ -43,9 +43,9 @@ public class CommandAutoRole extends Command {
         while (scanner.hasNextLine()){
             String currentLine = scanner.nextLine();
             lineNum++;
-            if(currentLine.startsWith("AUTOROLE +"event.getGuild().getId())){
+            /*if(currentLine.startsWith("AUTOROLE +"dsevent.getGuild().getId())){
                 
-            }
+            }*/
         }
 
 
