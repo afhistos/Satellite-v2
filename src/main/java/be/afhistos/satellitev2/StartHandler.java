@@ -23,7 +23,6 @@ public class StartHandler {
         props.load(StartHandler.class.getResourceAsStream("/props.properties"));
         BotUtils.log(LogLevel.INFO, "Démarrage de Satellite v"+props.getProperty("version"), true, false);
         logFile = new File("Satellite-log-"+BotUtils.getFullTimestamp(startTime)+".log");
-        System.out.println(logFile.getName());
         if(logFile.createNewFile()){
             BotUtils.log(LogLevel.CONFIG, "Fichier de `CommandWatcher` ("+logFile.getName()+") créé!", true, false);
         }else{
@@ -41,7 +40,6 @@ public class StartHandler {
         }
         dataWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dataFile), "UTF-8"));
         BotUtils.log(LogLevel.INFO,"Démarrage des threads nécessaires...", true, true);
-        mainThread.start();
         consoleThread = new ConsoleThread();
         consoleThread.start();
         serverInstance = new GanyServerThread(2310);
@@ -49,6 +47,7 @@ public class StartHandler {
         ganyServerThread.start();
         Satellite satellite = new Satellite(startTime, new EventWaiter());
         mainThread = new Thread(satellite, "Satellite-Thread");
+        mainThread.start();
 
     }
 
