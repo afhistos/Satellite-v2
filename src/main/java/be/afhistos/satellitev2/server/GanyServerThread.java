@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 public class GanyServerThread implements Runnable {
 
-    private Map<Integer, WorkerRunnable> clients = new HashMap<Integer, WorkerRunnable>();
+    private Map<Integer, WorkerRunnable> clients = new HashMap<>();
 
     private int serverPort = 5656;
     private ServerSocket serverSocket = null;
@@ -54,7 +54,7 @@ public class GanyServerThread implements Runnable {
         return isStopped;
     }
 
-    public synchronized void stop() {
+    synchronized public void stop() {
         this.isStopped=  true;
         getClientsStream().forEach(client -> {
             try {
@@ -78,19 +78,17 @@ public class GanyServerThread implements Runnable {
      * @param s the String to send to all clients
      */
     public void sendToClients(String s){
-        getClientsStream().forEach(client ->{
-            client.sendToClient(s);
-        });
+        getClientsStream().forEach(client -> client.sendToClient(s));
     }
 
     public void sendToClient(int port, String s){
         getClientsStream().filter(workerRunnable -> workerRunnable.getClientSocket().getPort() == port)
-                .forEach(workerRunnable -> { workerRunnable.sendToClient(s);
-        });
+                .forEach(workerRunnable -> workerRunnable.sendToClient(s));
 
     }
 
     public void removeClient(int clientPort){
+        BotUtils.log(LogLevel.INFO, "Removed client "+clientPort, true, true);
         WorkerRunnable worker = clients.remove(clientPort);
         if(worker == null){
             return; //Can't find the client Thread, already disconnected / never logged in
@@ -118,8 +116,8 @@ public class GanyServerThread implements Runnable {
      *
      * @return a stream of all connected clients
      */
-    public Stream<WorkerRunnable> getClientsStream(){
-         return clients.entrySet().stream().map(Map.Entry::getValue);
+    synchronized public Stream<WorkerRunnable> getClientsStream(){
+         return clients.values().stream();
     }
 
 

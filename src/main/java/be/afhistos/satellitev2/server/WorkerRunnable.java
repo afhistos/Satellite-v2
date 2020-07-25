@@ -7,6 +7,7 @@ import com.jagrosh.jdautilities.commons.utils.TableBuilder;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -32,13 +33,15 @@ public class WorkerRunnable implements Runnable {
                     ":"+clientSocket.getPort(), true, true);
         }
         String inputline;
-        while(clientSocket.isConnected() && !(StartHandler.getServerInstance().isStopped())){
+        while((clientSocket.isConnected() || !clientSocket.isClosed()) && !(StartHandler.getServerInstance().isStopped())){
             try {
-                if(((inputline = in.readLine()) != null)){
+                if(!clientSocket.isClosed() &&((inputline = in.readLine()) != null)){
                     treat(inputline);
                 }
+            } catch (SocketException ign){
             } catch (IOException e) {
                 e.printStackTrace();
+                break;
             }
         }
         //Client disconnected
@@ -46,10 +49,8 @@ public class WorkerRunnable implements Runnable {
     }
 
     private void treat(String s) {
-        if(s.startsWith("test")){
-            BotUtils.log(LogLevel.CONFIG, "Test effectué", true, false);
-
-        }else if(s.startsWith("list")){//afficher la liste des addresses connectées
+        System.out.println("TREAT "+s);
+        if(s.startsWith("list")) {//afficher la liste des addresses connectées
             List<List<String>> list = new ArrayList<>();
             StartHandler.getServerInstance().getClientsStream().forEach(worker -> {
                 list.add(Arrays.asList(worker.getClientSocket().getInetAddress().getHostAddress(),
@@ -57,18 +58,24 @@ public class WorkerRunnable implements Runnable {
             });
             String[][] values = new String[list.size()][];
             int i = 0;
-            for(List<String> nestedList : list){
+            for (List<String> nestedList : list) {
                 values[i++] = nestedList.toArray(new String[nestedList.size()]);
             }
 
             TableBuilder tb = new TableBuilder().setAlignment(TableBuilder.Alignment.CENTER)
-                    .setBorders(TableBuilder.Borders.newPlainBorders("-","|","+"))
+                    .setBorders(TableBuilder.Borders.newPlainBorders("-", "|", "+"))
                     .setName("Liste des connexions").addHeaders("Adresse", "Port").setValues(values);
             System.out.println(tb.build());
+
+        }else if(s.startsWith("time")){//envoyer la date complète
+            String time = BotUtils.getFullTimestamp(System.currentTimeMillis());
+            out.println(time);
         }
+
     }
 
     public void sendToClient(String s){
+        System.out.println("Sending "+s);
         out.println(s);
     }
 

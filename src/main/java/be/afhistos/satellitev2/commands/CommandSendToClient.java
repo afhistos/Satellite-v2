@@ -10,7 +10,7 @@ public class CommandSendToClient extends Command {
     public CommandSendToClient(){
         this.name = "send";
         this.ownerCommand= true;
-        this.arguments = "Chaine à envoyer";
+        this.hidden = true;
     }
 
     @Override
@@ -19,6 +19,10 @@ public class CommandSendToClient extends Command {
             event.reactError();
             return;
         }
-        StartHandler.getServerInstance().sendToClients(event.getArgs());
+        String toSend = event.getAuthor().getName()+ " : " + event.getArgs();
+        if(toSend.length() > 40){
+            toSend = toSend.substring(0,40);
+        }
+        StartHandler.getServerInstance().sendToClients("prntLcd "+toSend);
     }
 }

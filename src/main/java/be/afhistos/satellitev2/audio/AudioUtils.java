@@ -64,6 +64,16 @@ public class AudioUtils extends ListenerAdapter {
         g.getAudioManager().setSendingHandler(musicManager.getSendHandler());
         return musicManager;
     }
+    public synchronized Guild getMusicManagerGuild(GuildMusicManager musicManager){
+        Guild g = null;
+        for(Map.Entry<Long, GuildMusicManager> musicManagerEntry : musicManagerMap.entrySet()){
+            if(musicManagerEntry.getValue() == musicManager){
+                g = Satellite.getBot().getGuildById(musicManagerEntry.getKey());
+                break;
+            }
+        }
+        return g;
+    }
     public AudioTrack getPlayingTrack(Guild g){return getGuildAudioPlayer(g).player.getPlayingTrack();}
     public EmbedBuilder getNowPlayingEmbed(Guild g, User asker){
         AudioTrack t = getGuildAudioPlayer(g).player.getPlayingTrack();
@@ -179,7 +189,7 @@ public class AudioUtils extends ListenerAdapter {
             case LOADING:
                 return "Charge une musique";
             case SEEKING:
-                return "Recherche la musique demandéf";
+                return "Recherche la musique demandée";
             case FINISHED:
                 return "Ne joue plus de musique";
             default:
@@ -219,7 +229,6 @@ public class AudioUtils extends ListenerAdapter {
                 int i = 0;
                 for(AudioTrack t : playlist.getTracks()){
                     if(i >= limit){
-                        System.out.println("Limit atteinte/dépassée. i: "+i+"  limit: "+limit);
                         break;
                     }
                     getGuildAudioPlayer(chan.getGuild()).scheduler.queue(t);
@@ -259,14 +268,14 @@ public class AudioUtils extends ListenerAdapter {
         return false;
     }
     public boolean connectToFirstVoiceChannel(AudioManager audio){
-        if(!audio.isAttemptingToConnect() && !audio.isConnected()){
+        if(!audio.isConnected()){
             audio.openAudioConnection(audio.getGuild().getVoiceChannels().get(0));
             return audio.isConnected();
         }
         return false;
     }
     public void connectToVoiceChannel(AudioManager audio, VoiceChannel vc, boolean goToFirst){
-        if(!audio.isAttemptingToConnect() && !audio.isConnected()) {
+        if(!audio.isConnected()) {
             audio.openAudioConnection(vc);
             audio.setConnectionListener(new ConnectionListener() {
                 @Override
