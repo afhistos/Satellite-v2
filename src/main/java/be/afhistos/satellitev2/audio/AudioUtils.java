@@ -32,6 +32,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Optional;
 
 
 public class AudioUtils extends ListenerAdapter {
@@ -85,7 +86,7 @@ public class AudioUtils extends ListenerAdapter {
             builder.addField("Pour tout savoir sur les commandes musicales:", Satellite.getClient().getPrefix()+"help", true);
         }else{
             AudioTrackInfo info = t.getInfo();
-            builder.setTitle("Morceau actuellement joué dans "+g.getName(), t.getInfo().uri);
+            builder.setTitle("Morceau actuellement joué dans "+g.getName(), info.uri);
             builder.addField(info.author.replace(" - Topic",""),
                     (getGuildAudioPlayer(g).player.isPaused()?":pause_button: ":":arrow_forward: ")+info.title,false);
             builder.addField("Position:", getMusicTimestamp(t.getPosition()) + "/"
@@ -336,5 +337,14 @@ public class AudioUtils extends ListenerAdapter {
         if(g.getSelfMember().getVoiceState().inVoiceChannel()){
             g.getAudioManager().closeAudioConnection();
         }
+    }
+
+    public TextChannel getEMP(Guild g){
+        Optional<TextChannel> result = null;
+        try{
+            result =  g.getTextChannelsByName("sate-lecteur", false).stream()
+                    .filter(channel ->channel.getTopic().startsWith("emp-channel-"+g.getId())).findFirst();
+        }catch (NullPointerException ignored){}
+        return result.orElse(null);
     }
 }

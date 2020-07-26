@@ -6,6 +6,8 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.managers.AudioManager;
 
+import java.util.Optional;
+
 public class GuildMusicManager {
     public final AudioPlayer player;
     public final EmbeddedMultimediaPlayer embeddedPlayer;
@@ -20,7 +22,7 @@ public class GuildMusicManager {
         scheduler = new TrackScheduler(player);
         player.addListener(scheduler);
         if(hasEMP(manager)){
-            embeddedPlayer = new EmbeddedMultimediaPlayer();
+            embeddedPlayer = new EmbeddedMultimediaPlayer(AudioUtils.getInstance().getEMP(getGuild(manager)));
             player.addListener(embeddedPlayer);
         }else{
             embeddedPlayer = null;
@@ -29,13 +31,10 @@ public class GuildMusicManager {
     }
 
     private boolean hasEMP(AudioPlayerManager manager) {
-        Guild g = AudioUtils.getInstance().getMusicManagerGuild(this);
-        try{
-            return g.getTextChannelsByName("sate-lecteur", false).stream()
-                    .anyMatch(channel ->channel.getTopic().startsWith("emp-channel-"+g.getId()));
-        }catch (NullPointerException ign){//Aucun salon trouvé
-            return false;
-        }
+        return AudioUtils.getInstance().getEMP(getGuild(manager)) != null;
+    }
+    private Guild getGuild(AudioPlayerManager manager){
+        return AudioUtils.getInstance().getMusicManagerGuild(this);
     }
 
     public AudioPlayerSendHandler getSendHandler(){

@@ -86,4 +86,12 @@ public class TrackScheduler extends AudioEventAdapter {
     public void clearQueue(){
         queue.clear();
     }
+
+    public long getQueueDuration(){
+        long duration = 0L;
+        for (AudioTrack track : queue){
+            duration += track.getDuration();
+        }
+        return duration;
+    }
 }

@@ -43,7 +43,8 @@ public class Satellite implements Runnable{
         builder.addCommands(new CommandMonitoring(), new CommandStopBot(), new CommandConfinement(), new CommandSendToClient());
         builder.addCommands(new CommandBassBoost(), new CommandPlay(),new CommandVolume(),new CommandNowPlaying(),
                 new CommandPlaylist(waiter), new CommandStopMusic(), new CommandSkip(), new CommandShuffle(),
-                new CommandLoop(), new CommandJump(), new CommandPause(),new CommandClearPlaylist(), new CommandAutoRole());
+                new CommandLoop(), new CommandJump(), new CommandPause(),new CommandClearPlaylist(), new CommandAutoRole(),
+                new CommandEMPManager());
         builder.setOwnerId("279597100961103872").setCoOwnerIds("225261996709380106");
         builder.setEmojis("\u2705", "\u26a0", "\u274c");
         builder.useHelpBuilder(true).setListener(new CommandWatcher());

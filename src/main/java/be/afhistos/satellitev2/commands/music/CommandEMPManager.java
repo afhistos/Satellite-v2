@@ -35,8 +35,8 @@ public class CommandEMPManager extends Command {
             e.reply(getCommandHelp());
             return;
         }
-        String[] sArgs = e.getArgs().split(" ");
-        if(sArgs[0] == "setup"){
+        String[] sArgs = e.getArgs().split(" ");//Splitted arguments
+        if(sArgs[0].equals("setup")){
             if(sArgs.length >= 2){
                 TextChannel chan;
                 try{
@@ -49,10 +49,10 @@ public class CommandEMPManager extends Command {
                 }
                 setup(chan);
             }else{
-                e.getGuild().createTextChannel("wait-for-setup").queue(chan -> {
-                    setup(chan);
-                });
+                e.getGuild().createTextChannel("wait-for-setup").queue(this::setup);
             }
+        }else if(sArgs[0].equals("delete")){
+
         }
 
     }
@@ -76,11 +76,11 @@ public class CommandEMPManager extends Command {
         return sb;
     }
     private void setup(TextChannel c){
+        c.sendTyping().queue();
         c.getManager().setNSFW(false).setName("sate-lecteur").setTopic((TOPIC.replace("<guildID>",c.getGuild().getId())
                 .replace("<now>", Instant.now().toString()))).queue();
         //restart audio system
-        AudioUtils.getInstance().getGuildAudioPlayer(c.getGuild()).player.destroy();
-        c.sendTyping().queue();
+        AudioUtils.getInstance().stopMusic(c.getGuild());
         c.sendMessage("configuration terminée.").queue();
     }
 }
