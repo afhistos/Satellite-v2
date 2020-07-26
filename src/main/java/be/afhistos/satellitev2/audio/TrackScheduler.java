@@ -46,8 +46,12 @@ public class TrackScheduler extends AudioEventAdapter {
         if(endReason.mayStartNext){
             if(repeatingOnce) {//Repeating one song only
                 player.startTrack(lastTrack.makeClone(), false);
+                System.out.println("Repeating once: "+lastTrack.getInfo().title);
             }else if(repeatingPlaylist){
-                queue(lastTrack.makeClone());
+                queue.offer(lastTrack.makeClone());
+                System.out.println("Repeating all: "+lastTrack.getInfo().title);
+                skip();
+
             }else{
                 skip();
             }
@@ -62,8 +66,8 @@ public class TrackScheduler extends AudioEventAdapter {
         this.repeatingOnce = repeatingOnce;
     }
     public boolean invertRepeatingOnce(){ //renvoie true si la repetition est finalement activée
+        this.repeatingPlaylist = this.repeatingOnce;
         this.repeatingOnce = !this.repeatingOnce;
-        this.repeatingPlaylist = !this.repeatingOnce;
         return this.repeatingOnce;
     }
 
@@ -75,8 +79,8 @@ public class TrackScheduler extends AudioEventAdapter {
         this.repeatingPlaylist = repeatingPlaylist;
     }
     public boolean invertRepeatingPlaylist(){
+        this.repeatingOnce = this.repeatingPlaylist;
         this.repeatingPlaylist = !this.repeatingPlaylist;
-        this.repeatingOnce = !this.repeatingPlaylist;
         return this.repeatingPlaylist;
     }
     public void clearQueue(){

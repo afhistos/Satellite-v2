@@ -41,7 +41,6 @@ public class CommandPlay extends Command {
             }
             query = "ytsearch:"+ query;
         }
-        System.out.println("i: "+i+"\nQuery: "+query+"\nFirst: "+first);
         AudioUtils.getInstance().loadAndPlay(e.getTextChannel(),  query, i);
     }
 }

@@ -30,8 +30,12 @@ public class GuildMusicManager {
 
     private boolean hasEMP(AudioPlayerManager manager) {
         Guild g = AudioUtils.getInstance().getMusicManagerGuild(this);
-        return g.getTextChannelsByName("sate-lecteur", false).stream()
-                .anyMatch(channel ->channel.getTopic().startsWith("emp-channel-"+g.getId()));
+        try{
+            return g.getTextChannelsByName("sate-lecteur", false).stream()
+                    .anyMatch(channel ->channel.getTopic().startsWith("emp-channel-"+g.getId()));
+        }catch (Exception ign){//Aucun salon trouvé
+            return false;
+        }
     }
 
     public AudioPlayerSendHandler getSendHandler(){

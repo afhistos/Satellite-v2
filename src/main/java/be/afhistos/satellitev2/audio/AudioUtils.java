@@ -239,7 +239,7 @@ public class AudioUtils extends ListenerAdapter {
                         i++;
                     }
                 }
-                chan.sendMessage("Ajout de "+i+" morceau(x) à la playlist, comprennant "+
+                chan.sendMessage("Ajout de "+playlist.getTracks().size()+" morceau(x) à la playlist, comprennant "+
                         artists+"et plein d'autres...").queue();
             }
 
