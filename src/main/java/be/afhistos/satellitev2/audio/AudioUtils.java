@@ -129,7 +129,7 @@ public class AudioUtils extends ListenerAdapter {
         return sb.toString();
     }
     private static String getNumberEmote(int number) {
-        String emote = "";
+        String emote;
         switch (number){
             case 0:
                 emote = ":zero:";
@@ -220,12 +220,8 @@ public class AudioUtils extends ListenerAdapter {
 
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
-                AudioTrack first = playlist.getSelectedTrack();
-                String artists = "";
+                StringBuilder artists = new StringBuilder();
                 String artist;
-                if(first == null){
-                    first = playlist.getTracks().get(0);
-                }
                 int i = 0;
                 for(AudioTrack t : playlist.getTracks()){
                     if(i >= limit){
@@ -234,8 +230,8 @@ public class AudioUtils extends ListenerAdapter {
                     getGuildAudioPlayer(chan.getGuild()).scheduler.queue(t);
                     artist = t.getInfo().author;
                     artist = artist.replace(" - Topic", "");
-                    if(!artists.contains(artist) && i <= 5){
-                        artists = artists + artist+", ";
+                    if(!artists.toString().contains(artist) && i <= 5){
+                        artists.append(artist).append(", ");
                         i++;
                     }
                 }
@@ -262,10 +258,7 @@ public class AudioUtils extends ListenerAdapter {
         GuildMusicManager musicManager = getGuildAudioPlayer(g);
         String oldTrackId = musicManager.player.getPlayingTrack().getIdentifier();
         musicManager.scheduler.skip();
-        if(!oldTrackId.equals(musicManager.player.getPlayingTrack().getIdentifier())){
-            return true;
-        }
-        return false;
+        return !oldTrackId.equals(musicManager.player.getPlayingTrack().getIdentifier());
     }
     public boolean connectToFirstVoiceChannel(AudioManager audio){
         if(!audio.isConnected()){

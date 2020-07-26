@@ -33,7 +33,7 @@ public class GuildMusicManager {
         try{
             return g.getTextChannelsByName("sate-lecteur", false).stream()
                     .anyMatch(channel ->channel.getTopic().startsWith("emp-channel-"+g.getId()));
-        }catch (Exception ign){//Aucun salon trouvé
+        }catch (NullPointerException ign){//Aucun salon trouvé
             return false;
         }
     }

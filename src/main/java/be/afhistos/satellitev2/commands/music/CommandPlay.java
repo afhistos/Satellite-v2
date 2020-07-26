@@ -20,7 +20,7 @@ public class CommandPlay extends Command {
     @Override
     protected void execute(CommandEvent e) {
         AudioManager audio = e.getGuild().getAudioManager();
-        if(!audio.isAttemptingToConnect() || !audio.isConnected()){
+        if(!audio.isConnected()){
             if(e.getMember().getVoiceState().inVoiceChannel()){
                 AudioUtils.getInstance().connectToVoiceChannel(audio, e.getMember().getVoiceState().getChannel(), true);
             }else{
@@ -29,7 +29,7 @@ public class CommandPlay extends Command {
         }
         String query;
         int i=20; //Default value
-        String first = "/";
+        String first;
         if(e.getArgs().startsWith("http://") || e.getArgs().startsWith("https://")){
             query = e.getArgs();
         }else{
