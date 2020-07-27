@@ -77,7 +77,11 @@ public class BotUtils {
         int sec = (int) (ms /1000)%60;
         int min = (int) (ms /60000)%60;
         int h = (int) ((ms /(1000 * 60 *60)) %24);
-        return String.format("%02dh %02dm %02ds" +(showMs ? ".%sms": ""), h,min,sec,last_ms);
+        String hours = "";
+        if(h >0){
+            hours = String.format("%02dh", h);
+        }
+        return String.format(hours + "%02dm %02ds" +(showMs ? ".%sms": ""), min,sec,last_ms);
     }
     public static String getResourcesUsage() throws Exception {
         StringBuilder sb = new StringBuilder("Utilisation des ressources par Satellite:");

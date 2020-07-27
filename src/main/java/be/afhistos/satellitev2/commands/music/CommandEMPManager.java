@@ -7,8 +7,10 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import javax.xml.soap.Text;
 import java.time.Instant;
 
 public class CommandEMPManager extends Command {
@@ -21,8 +23,9 @@ public class CommandEMPManager extends Command {
         this.name = "EMPManager";
         this.aliases = new String[]{"embedplayer", "emp", "playermanager"};
         this.botPermissions = new Permission[]{Permission.MESSAGE_EMBED_LINKS};
+        this.userPermissions = new Permission[]{Permission.ADMINISTRATOR};
         this.guildOnly =true;
-        this.arguments = "<setup/delete/help>";
+        this.arguments = "help";
         this.help = "Commande-mère pour le Lecteur Multimédia Intégré";
 
     }
@@ -37,6 +40,11 @@ public class CommandEMPManager extends Command {
         }
         String[] sArgs = e.getArgs().split(" ");//Splitted arguments
         if(sArgs[0].equals("setup")){
+            if(!e.getSelfMember().hasPermission(Permission.MANAGE_CHANNEL)){
+                e.reactError();
+                e.reply("J'ai besoin d'avoir la permission de gérer les salons pour créer et modifier celui du système EMP");
+                return;
+            }
             if(sArgs.length >= 2){
                 TextChannel chan;
                 try{
@@ -53,6 +61,21 @@ public class CommandEMPManager extends Command {
             }
         }else if(sArgs[0].equals("delete")){
 
+        }else if(sArgs[0].equals("clear")){
+            AudioUtils.getInstance().getGuildAudioPlayer(e.getGuild());//Permet de charger le lecteur si il n'existe pas
+            TextChannel channel = AudioUtils.getInstance().getGuildAudioPlayer(e.getGuild()).embeddedPlayer.getChannel();
+            int n = (sArgs.length >= 2 ? Integer.parseInt(sArgs[1]) : 100);
+            if(n == 0){n++;}
+            channel.getHistory().retrievePast(n).queue(messages -> {
+                for (Message msg : messages){
+                    System.out.println("message id : "+msg.getId());
+                    if(msg.getId()!=AudioUtils.getInstance().getGuildAudioPlayer(e.getGuild()).embeddedPlayer.getId()){
+                        msg.delete().queue();
+
+                    }
+                }
+                System.out.println("real id : "+AudioUtils.getInstance().getGuildAudioPlayer(e.getGuild()).embeddedPlayer.getId());
+            });
         }
 
     }
@@ -69,6 +92,8 @@ public class CommandEMPManager extends Command {
                 " textuel précisé via son identifiant." +
                 "\n" +
                 "__delete:__ permet de supprimer le système EMP automatiquement." + "\n" +
+                "__clear <n>(1 » 100):__ permet de supprimer les <n> derniers messages du salon EMP. Si <n> n'est pas précisés, tous" +
+                "les messages seront supprimés"+"\n"+
                 "__help:__ Affiche ce message." + "\n" +
                 "Après l'éxécution de la commande __setup__, merci de lire la description du salon textuel créé/modifié," +
                 " elle contient quelques informations complémentaires" + "\n" +

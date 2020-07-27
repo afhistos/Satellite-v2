@@ -1,5 +1,6 @@
 package be.afhistos.satellitev2.audio;
 
+import be.afhistos.satellitev2.Satellite;
 import com.sedmelluq.discord.lavaplayer.filter.equalizer.EqualizerFactory;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
@@ -10,31 +11,30 @@ import java.util.Optional;
 
 public class GuildMusicManager {
     public final AudioPlayer player;
+    private String guildId;
     public final EmbeddedMultimediaPlayer embeddedPlayer;
     public final TrackScheduler scheduler;
     public final EqualizerFactory equalizer;
     private boolean bassActive;
 
-    public GuildMusicManager(AudioPlayerManager manager){
+    public GuildMusicManager(AudioPlayerManager manager, String guildId){
         player = manager.createPlayer();
+        this.guildId = guildId;
         equalizer = new EqualizerFactory();
         player.setFilterFactory(equalizer);
         scheduler = new TrackScheduler(player);
         player.addListener(scheduler);
+        bassActive = false;
         if(hasEMP(manager)){
-            embeddedPlayer = new EmbeddedMultimediaPlayer(AudioUtils.getInstance().getEMP(getGuild(manager)));
+            embeddedPlayer = new EmbeddedMultimediaPlayer(AudioUtils.getInstance().retreiveEMP(Satellite.getBot().getGuildById(guildId)), this);
             player.addListener(embeddedPlayer);
         }else{
             embeddedPlayer = null;
         }
-        bassActive = false;
     }
 
     private boolean hasEMP(AudioPlayerManager manager) {
-        return AudioUtils.getInstance().getEMP(getGuild(manager)) != null;
-    }
-    private Guild getGuild(AudioPlayerManager manager){
-        return AudioUtils.getInstance().getMusicManagerGuild(this);
+        return AudioUtils.getInstance().retreiveEMP(Satellite.getBot().getGuildById(guildId)) != null;
     }
 
     public AudioPlayerSendHandler getSendHandler(){

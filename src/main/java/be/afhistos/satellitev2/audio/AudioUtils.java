@@ -1,6 +1,5 @@
 package be.afhistos.satellitev2.audio;
 
-import be.afhistos.satellitev2.BotUtils;
 import be.afhistos.satellitev2.DefaultEmbed;
 import be.afhistos.satellitev2.Satellite;
 import com.sedmelluq.discord.lavaplayer.filter.equalizer.EqualizerFactory;
@@ -9,7 +8,6 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
-import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
@@ -26,13 +24,9 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 import javax.annotation.Nonnull;
-import javax.rmi.CORBA.Util;
-import java.time.Clock;
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Optional;
 
 
 public class AudioUtils extends ListenerAdapter {
@@ -59,22 +53,13 @@ public class AudioUtils extends ListenerAdapter {
         long id = g.getIdLong();
         GuildMusicManager musicManager = musicManagerMap.get(id);
         if(musicManager == null){
-            musicManager = new GuildMusicManager(playerManager);
+            musicManager = new GuildMusicManager(playerManager, g.getId());
             musicManagerMap.put(id, musicManager);
         }
         g.getAudioManager().setSendingHandler(musicManager.getSendHandler());
         return musicManager;
     }
-    public synchronized Guild getMusicManagerGuild(GuildMusicManager musicManager){
-        Guild g = null;
-        for(Map.Entry<Long, GuildMusicManager> musicManagerEntry : musicManagerMap.entrySet()){
-            if(musicManagerEntry.getValue() == musicManager){
-                g = Satellite.getBot().getGuildById(musicManagerEntry.getKey());
-                break;
-            }
-        }
-        return g;
-    }
+
     public AudioTrack getPlayingTrack(Guild g){return getGuildAudioPlayer(g).player.getPlayingTrack();}
     public EmbedBuilder getNowPlayingEmbed(Guild g, User asker){
         AudioTrack t = getGuildAudioPlayer(g).player.getPlayingTrack();
@@ -334,17 +319,21 @@ public class AudioUtils extends ListenerAdapter {
         manager.player.stopTrack();
         manager.scheduler.clearQueue();
         manager.player.destroy();
+        musicManagerMap.remove(g.getIdLong());
         if(g.getSelfMember().getVoiceState().inVoiceChannel()){
             g.getAudioManager().closeAudioConnection();
         }
     }
 
-    public TextChannel getEMP(Guild g){
-        Optional<TextChannel> result = null;
-        try{
-            result =  g.getTextChannelsByName("sate-lecteur", false).stream()
-                    .filter(channel ->channel.getTopic().startsWith("emp-channel-"+g.getId())).findFirst();
-        }catch (NullPointerException ignored){}
-        return result.orElse(null);
+    public TextChannel retreiveEMP(Guild g){
+        TextChannel channel = null;
+        for(TextChannel c : g.getTextChannelsByName("sate-lecteur", false)){
+            if(c.getTopic().startsWith("emp-channel-"+g.getId())){
+                channel = c;
+                break;
+            }
+        }
+        return channel;
     }
+
 }
