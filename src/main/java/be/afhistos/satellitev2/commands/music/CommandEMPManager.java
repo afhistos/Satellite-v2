@@ -66,16 +66,8 @@ public class CommandEMPManager extends Command {
             TextChannel channel = AudioUtils.getInstance().getGuildAudioPlayer(e.getGuild()).embeddedPlayer.getChannel();
             int n = (sArgs.length >= 2 ? Integer.parseInt(sArgs[1]) : 100);
             if(n == 0){n++;}
-            channel.getHistory().retrievePast(n).queue(messages -> {
-                for (Message msg : messages){
-                    System.out.println("message id : "+msg.getId());
-                    if(msg.getId()!=AudioUtils.getInstance().getGuildAudioPlayer(e.getGuild()).embeddedPlayer.getId()){
-                        msg.delete().queue();
+            AudioUtils.getInstance().getGuildAudioPlayer(e.getGuild()).embeddedPlayer.clearChannel(n);
 
-                    }
-                }
-                System.out.println("real id : "+AudioUtils.getInstance().getGuildAudioPlayer(e.getGuild()).embeddedPlayer.getId());
-            });
         }
 
     }

@@ -4,18 +4,19 @@ import be.afhistos.satellitev2.BotUtils;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 
 public class UpdateThread extends Thread {
     Message message;
-    AudioTrack track;
+    public AudioTrack track;
     EmbedBuilder embed;
     int songLength;
     int songPos;
 
-    public UpdateThread(Message msg, AudioTrack track, EmbedBuilder embed) {
+    public UpdateThread(Message msg, EmbedBuilder embed, AudioTrack t) {
         this.message = msg;
-        this.track = track;
         this.embed = embed;
+        this.track = t;
         songLength = Math.toIntExact(track.getDuration())/1000;//Durée de 'track' en secondes
         songPos = Math.toIntExact(track.getPosition())/1000;
         embed.setDescription(getProgressBar(songPos, songLength));
@@ -26,12 +27,15 @@ public class UpdateThread extends Thread {
     public void run() {
         while(true) {
             songPos = Math.toIntExact(track.getPosition()) / 1000;
-            String formattedTime = BotUtils.getTimestamp(songPos * 1000, false) + "**/**" +
-                    BotUtils.getTimestamp(songLength * 1000, false);
-            embed.setDescription(getProgressBar(songPos, songLength) + " " + formattedTime);
-            message.editMessage(embed.build()).queue();
+            System.out.println("songPos : "+songPos+"   regulation : "+songPos % 5);
+            if(songPos %5 == 0){//Régule les mises à jours envoyées à discord
+                String formattedTime = BotUtils.getTimestamp(songPos * 1000, false) + "**/**" +
+                        BotUtils.getTimestamp(songLength * 1000, false);
+                embed.setDescription(getProgressBar(songPos, songLength) + " " + formattedTime);
+                message.editMessage(embed.build()).queue();
+            }
             try {
-                Thread.sleep(4500);
+                Thread.sleep(500);
             } catch (InterruptedException ignored) {}
         }
     }
@@ -46,4 +50,12 @@ public class UpdateThread extends Thread {
         }
         return s.toString();
     }
+
+    public void setTrack(AudioTrack track) {
+        this.track = track;
+        embed.setThumbnail("https://img.youtube.com/vi/"+track.getIdentifier()+"/maxresdefault.jpg")
+                .setTitle(track.getInfo().title, track.getInfo().uri);
+        message.editMessage(embed.build()).queue();
+    }
+
 }
