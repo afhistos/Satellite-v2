@@ -13,6 +13,6 @@ public class DefaultEmbed extends EmbedBuilder {
         this.setColor(BotUtils.getDefaultColor());
         this.setTimestamp(Instant.now(Clock.systemDefaultZone()));
         this.setAuthor("Commande éxécutée par "+u.getAsTag(), u.getAvatarUrl(),u.getAvatarUrl());
-        this.setFooter("Satellite, toujours la pour vous servir", Satellite.getBot().getSelfUser().getAvatarUrl());
+        this.setFooter("Satellite, toujours là pour vous servir", Satellite.getBot().getSelfUser().getAvatarUrl());
     }
 }

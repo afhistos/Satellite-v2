@@ -1,13 +1,10 @@
 package be.afhistos.satellitev2.audio;
 
 import be.afhistos.satellitev2.Satellite;
+import be.afhistos.satellitev2.audio.emp.EmbeddedMultimediaPlayer;
 import com.sedmelluq.discord.lavaplayer.filter.equalizer.EqualizerFactory;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.managers.AudioManager;
-
-import java.util.Optional;
 
 public class GuildMusicManager {
     public final AudioPlayer player;

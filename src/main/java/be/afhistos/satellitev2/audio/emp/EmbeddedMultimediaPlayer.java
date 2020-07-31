@@ -1,13 +1,12 @@
-package be.afhistos.satellitev2.audio;
+package be.afhistos.satellitev2.audio.emp;
 
-import be.afhistos.satellitev2.BotUtils;
 import be.afhistos.satellitev2.DefaultEmbed;
+import be.afhistos.satellitev2.audio.GuildMusicManager;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import com.sedmelluq.discord.lavaplayer.track.TrackMarker;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 
@@ -41,8 +40,10 @@ public class EmbeddedMultimediaPlayer extends AudioEventAdapter {
                 ":arrow_up_small::arrow_down_small: : Gérer le volume   " +
                 ":twisted_rightwards_arrows: : Mélanger la liste de lecture\n" +
                 ":fast_forward: : Avancer de 10 secondes" +
+                ":play_pause: : Bouton play/pause\n"+
                 ":leftwards_arrow_with_hook: : Répéter la liste de lecture\n" +
                 ":arrows_counterclockwise: : Répéter la musique en cours " +
+                ":wastebasket: : Supprimer le lecteur\n"+
                 ":loud_sound: : (Dés)activer les basses",false);
         builder.addField("Status:", (player.isPaused() ? "En pause" : "En cours de lecture"), true);
         if(channel.getGuild().getAudioManager().isConnected()){
@@ -53,7 +54,7 @@ public class EmbeddedMultimediaPlayer extends AudioEventAdapter {
                 "** musiques restantes]", true);
         channel.retrieveMessageById(id).queue(message -> {
             message.editMessage(builder.build()).queue();
-            timeThread = new TimeEditorThread(message,t,builder);
+            timeThread = new UpdateThread(message,t,builder);
             timeThread.start();
             message.addReaction("\u25C0").queue();
             message.addReaction("\u25B6").queue();
@@ -62,8 +63,11 @@ public class EmbeddedMultimediaPlayer extends AudioEventAdapter {
             message.addReaction("\uD83D\uDD00").queue();
             message.addReaction("\u23E9").queue();
             message.addReaction("\u21A9").queue();
+            message.addReaction("\u23EF").queue();
             message.addReaction("\uD83D\uDD04").queue();
+            message.addReaction("\uD83D\uDDD1").queue();
             message.addReaction("\uD83D\uDD0A").queue();
+
 
         });
 
