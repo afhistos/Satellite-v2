@@ -6,10 +6,11 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.hooks.EventListener;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class EmbeddedMultimediaPlayer extends AudioEventAdapter {
 
@@ -19,23 +20,24 @@ public class EmbeddedMultimediaPlayer extends AudioEventAdapter {
     private UpdateThread updateThread;
 
     public EmbeddedMultimediaPlayer(TextChannel c, GuildMusicManager musicManager){
-        this.musicManager = musicManager;
         channel = c;
-        clearChannel(100);
+        this.musicManager = musicManager;
         EmbedBuilder builder = new DefaultEmbed(c.getJDA().getSelfUser());
         builder.setDescription("Le lecteur est prêt à l'emploi! Ajoutez une musique avec la commande `²play`.");
         channel.sendMessage(builder.build()).queue(message -> {
             id = message.getId();
+            clearChannel(100);
         });
+
     }
 
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack t) {
         if(updateThread == null){
-            EmbedBuilder builder = new EMPDefaultEmbed(player, t, musicManager, channel);
+            EmbedBuilder builder = new EMPDefaultEmbed(t, musicManager, channel);
             channel.retrieveMessageById(id).queue(message -> {
                 message.editMessage(builder.build()).queue();
-                updateThread = new UpdateThread(message,builder, t);
+                updateThread = new UpdateThread(message,builder, t, musicManager);
                 updateThread.start();
                 message.addReaction("\u25C0").queue();
                 message.addReaction("\u25B6").queue();
@@ -43,10 +45,9 @@ public class EmbeddedMultimediaPlayer extends AudioEventAdapter {
                 message.addReaction("\uD83D\uDD3D").queue();
                 message.addReaction("\uD83D\uDD00").queue();
                 message.addReaction("\u23E9").queue();
-                message.addReaction("\u21A9").queue();
                 message.addReaction("\u23EF").queue();
+                message.addReaction("\u21A9").queue();
                 message.addReaction("\uD83D\uDD04").queue();
-                message.addReaction("\uD83D\uDDD1").queue();
                 message.addReaction("\uD83D\uDD0A").queue();
             });
         }else{
@@ -66,6 +67,16 @@ public class EmbeddedMultimediaPlayer extends AudioEventAdapter {
         });
     }
 
+    @Override
+    public void onPlayerPause(AudioPlayer player) {
+        updateEmbedPlayer();
+    }
+
+    @Override
+    public void onPlayerResume(AudioPlayer player) {
+        updateEmbedPlayer();
+    }
+
     public TextChannel getChannel() {
         return channel;
     }
@@ -77,12 +88,17 @@ public class EmbeddedMultimediaPlayer extends AudioEventAdapter {
     public void clearChannel(int limit){
         channel.getHistory().retrievePast(limit).queue(messages -> {
             for (Message msg : messages){
-                if(msg.getId()==id){
+                if(msg.getId().equals(id)){
                     System.out.println("Found the NoDelId.");
                 }else{
+                    System.out.println("Msg found: "+msg.getId()+" || NoDelId: "+id);
                     msg.delete().queue();
                 }
             }
         });
+    }
+
+    public void updateEmbedPlayer(){
+        updateThread.setEmbed(new EMPDefaultEmbed(updateThread.getTrack(), musicManager, channel));
     }
 }

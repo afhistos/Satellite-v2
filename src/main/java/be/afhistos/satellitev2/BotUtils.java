@@ -2,7 +2,6 @@ package be.afhistos.satellitev2;
 
 import be.afhistos.satellitev2.consoleUtils.LogLevel;
 import be.afhistos.satellitev2.consoleUtils.TextColor;
-import be.afhistos.satellitev2.server.GanyServerThread;
 import net.dv8tion.jda.api.Permission;
 
 import javax.management.Attribute;
@@ -30,7 +29,7 @@ public class BotUtils {
     public static void log(LogLevel l, String s, boolean logToConsole, boolean logToFile){
         StackTraceElement ste = Thread.currentThread().getStackTrace()[2];
         String now = getFullTimestamp(System.currentTimeMillis());
-        String log = "("+ l.getKey()+") "+now+ l.getColor() + " VIA "+ ste.getFileName()+"#"+
+        String log = "("+ l.getKey()+") "+now+ l.getColor() + " VIA "+ ste.getFileName().replace(".java","")+"#"+
                 ste.getMethodName()+":"+ste.getLineNumber()+" :: "+s;
         if(logToConsole){System.out.println(log+ TextColor.RESET);}
         if(logToFile){

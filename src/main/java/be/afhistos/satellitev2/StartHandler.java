@@ -2,7 +2,6 @@ package be.afhistos.satellitev2;
 
 import be.afhistos.satellitev2.consoleUtils.ConsoleThread;
 import be.afhistos.satellitev2.consoleUtils.LogLevel;
-import be.afhistos.satellitev2.server.GanyServerThread;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 
 import javax.security.auth.login.LoginException;
@@ -12,11 +11,10 @@ import java.util.Properties;
 
 public class StartHandler {
     private static long startTime;
-    private static GanyServerThread serverInstance;
     private static Properties props = new Properties();
     private static File logFile, dataFile;
     private static Writer logWriter = null, dataWriter = null;
-    private static Thread mainThread, consoleThread, ganyServerThread;
+    private static Thread mainThread, consoleThread;
 
     public static void main(String[] args) throws IOException, LoginException, InterruptedException, SQLException {
         startTime = System.currentTimeMillis();
@@ -42,9 +40,6 @@ public class StartHandler {
         BotUtils.log(LogLevel.INFO,"Démarrage des threads nécessaires...", true, true);
         consoleThread = new ConsoleThread();
         consoleThread.start();
-        serverInstance = new GanyServerThread(2310);
-        ganyServerThread = new Thread(serverInstance);
-        ganyServerThread.start();
         Satellite satellite = new Satellite(startTime, new EventWaiter());
         mainThread = new Thread(satellite, "Satellite-Thread");
         mainThread.start();
@@ -81,11 +76,4 @@ public class StartHandler {
         return dataWriter;
     }
 
-    public static Thread getServerThread() {
-        return ganyServerThread;
-    }
-
-    public static GanyServerThread getServerInstance() {
-        return serverInstance;
-    }
 }

@@ -27,6 +27,7 @@ public class CommandPlay extends Command {
                 AudioUtils.getInstance().connectToFirstVoiceChannel(audio);
             }
         }
+        AudioUtils.getInstance().getGuildAudioPlayer(e.getGuild());//Load GuildAudioPlayer before playing
         String query;
         int i=20; //Default value
         String first;

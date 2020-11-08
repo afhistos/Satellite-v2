@@ -9,12 +9,14 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import java.awt.*;
+
 public class EMPDefaultEmbed extends EmbedBuilder {
-    public EMPDefaultEmbed(AudioPlayer player, AudioTrack t, GuildMusicManager musicManager, TextChannel channel){
+    public EMPDefaultEmbed(AudioTrack t, GuildMusicManager musicManager, TextChannel channel){
         AudioTrackInfo info = t.getInfo();
         this.setThumbnail("https://img.youtube.com/vi/"+t.getIdentifier()+"/maxresdefault.jpg").setTitle(info.title, info.uri);
         this.setDescription("Chargement...");
-        this.addField("Par "+info.author, "Volume: "+player.getVolume()+ "%      Basses: "
+        this.addField("Par "+info.author, "Volume: "+musicManager.player.getVolume()+ "%      Basses: "
                 +(musicManager.isBassActive() ? "":"dés")+
                 "activées", false);
         this.addField("Contrôles:",":arrow_backward::arrow_forward: : Passer à la musique précédente/suivante\n" +
@@ -24,9 +26,9 @@ public class EMPDefaultEmbed extends EmbedBuilder {
                 ":play_pause: : Bouton play/pause\n"+
                 ":leftwards_arrow_with_hook: : Répéter la liste de lecture " +
                 ":arrows_counterclockwise: : Répéter la musique en cours\n" +
-                ":wastebasket: : Supprimer le lecteur "+
                 ":loud_sound: : (Dés)activer les basses",false);
-        this.addField("Status:", (player.isPaused() ? "En pause" : "En cours de lecture"), true);
+        this.addField("Status:", (musicManager.player.isPaused() ? "En pause" : "En cours de lecture"), true);
+        this.setColor(new Color(151,60,170));
         if(channel.getGuild().getAudioManager().isConnected()){
             int n = channel.getGuild().getAudioManager().getConnectedChannel().getMembers().size() - 1;
             this.addField("Auditeurs:", "Il y à **"+n+"** auditeur(s)", true);

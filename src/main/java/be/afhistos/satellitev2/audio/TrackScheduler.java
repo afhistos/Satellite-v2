@@ -64,10 +64,14 @@ public class TrackScheduler extends AudioEventAdapter {
 
     public void setRepeatingOnce(boolean repeatingOnce) {
         this.repeatingOnce = repeatingOnce;
+        this.repeatingPlaylist = false;
     }
     public boolean invertRepeatingOnce(){ //renvoie true si la repetition est finalement activée
-        this.repeatingPlaylist = this.repeatingOnce;
-        this.repeatingOnce = !this.repeatingOnce;
+        if(isRepeatingOnce()){
+            setRepeatingOnce(false);
+        }else{
+            setRepeatingOnce(true);
+        }
         return this.repeatingOnce;
     }
 
@@ -76,11 +80,15 @@ public class TrackScheduler extends AudioEventAdapter {
     }
 
     public void setRepeatingPlaylist(boolean repeatingPlaylist) {
+        this.repeatingOnce = false;
         this.repeatingPlaylist = repeatingPlaylist;
     }
     public boolean invertRepeatingPlaylist(){
-        this.repeatingOnce = this.repeatingPlaylist;
-        this.repeatingPlaylist = !this.repeatingPlaylist;
+        if(isRepeatingPlaylist()){
+            setRepeatingPlaylist(false);
+        }else{
+            setRepeatingPlaylist(true);
+        }
         return this.repeatingPlaylist;
     }
     public void clearQueue(){
@@ -93,5 +101,8 @@ public class TrackScheduler extends AudioEventAdapter {
             duration += track.getDuration();
         }
         return duration;
+    }
+    public void playLastTrack(){
+        player.startTrack(lastTrack.makeClone(), false);
     }
 }

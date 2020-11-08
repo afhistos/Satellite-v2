@@ -23,7 +23,7 @@ public class CommandSkip extends Command {
                 e.reply(e.getClient().getError()+" Nombre invalide! Saut de 1 morceau...");
             }
         }
-        if(skip >= AudioUtils.getInstance().getGuildAudioPlayer(e.getGuild()).scheduler.getQueue().size()){
+        if(skip > AudioUtils.getInstance().getGuildAudioPlayer(e.getGuild()).scheduler.getQueue().size()){
             e.replyWarning("La playlist n'est pas aussi grande! arrêt de la musique en cours...", message -> {
                 AudioUtils.getInstance().stopMusic(e.getGuild());
                 message.addReaction(e.getClient().getSuccess()).queue();

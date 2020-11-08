@@ -184,8 +184,12 @@ public class AudioUtils extends ListenerAdapter {
     }
 
     public boolean setVolume(Guild g,int value){
-        getGuildAudioPlayer(g).player.setVolume(value);
-        return getGuildAudioPlayer(g).player.getVolume() == value;
+        GuildMusicManager manager = getGuildAudioPlayer(g);
+        manager.player.setVolume(value);
+        if(manager.hasEMP()){
+            manager.embeddedPlayer.updateEmbedPlayer();
+        }
+        return manager.player.getVolume() == value;
     }
 
     /**
@@ -295,6 +299,9 @@ public class AudioUtils extends ListenerAdapter {
             }
             manager.player.setVolume(50);
             manager.setBassActive(true);
+        }
+        if(manager.hasEMP()){
+            manager.embeddedPlayer.updateEmbedPlayer();
         }
     }
 

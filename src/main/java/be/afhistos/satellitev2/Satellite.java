@@ -1,15 +1,14 @@
 package be.afhistos.satellitev2;
 
 import be.afhistos.satellitev2.audio.AudioUtils;
+import be.afhistos.satellitev2.audio.emp.EMPEventListener;
 import be.afhistos.satellitev2.commands.*;
 import be.afhistos.satellitev2.commands.music.*;
 import be.afhistos.satellitev2.consoleUtils.LogLevel;
 import be.afhistos.satellitev2.consoleUtils.TextColor;
 import be.afhistos.satellitev2.listeners.CommandWatcher;
-import be.afhistos.satellitev2.listeners.DiscordEventListener;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
-import com.jagrosh.jdautilities.commons.JDAUtilitiesInfo;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -40,14 +39,14 @@ public class Satellite implements Runnable{
         BotUtils.CAT_PERMISSIONS_DENY =  new LinkedList<>();
         BotUtils.CAT_PERMISSIONS_DENY.add(Permission.VIEW_CHANNEL);
         builder.setStatus(OnlineStatus.IDLE).setPrefix("²");
-        builder.addCommands(new CommandMonitoring(), new CommandStopBot(), new CommandConfinement(), new CommandSendToClient());
+        builder.addCommands(new CommandMonitoring(), new CommandStopBot(), new CommandConfinement());
         builder.addCommands(new CommandBassBoost(), new CommandPlay(),new CommandVolume(),new CommandNowPlaying(),
                 new CommandPlaylist(waiter), new CommandStopMusic(), new CommandSkip(), new CommandShuffle(),
                 new CommandLoop(), new CommandJump(), new CommandPause(),new CommandClearPlaylist(), new CommandAutoRole(),
-                new CommandEMPManager());
+                new CommandEMPManager(), new CommandHelp());
         builder.setOwnerId("279597100961103872").setCoOwnerIds("225261996709380106");
         builder.setEmojis("\u2705", "\u26a0", "\u274c");
-        builder.useHelpBuilder(true).setListener(new CommandWatcher());
+        builder.useHelpBuilder(false).setListener(new CommandWatcher());
         client = builder.build();
         JDABuilder botBuilder = JDABuilder.createLight(StartHandler.getProperties().getProperty("token"));
         EnumSet<GatewayIntent> intents = EnumSet.of(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES
@@ -55,7 +54,7 @@ public class Satellite implements Runnable{
         EnumSet<CacheFlag> flags = EnumSet.of(CacheFlag.CLIENT_STATUS, CacheFlag.VOICE_STATE);
         botBuilder.enableCache(flags);
         botBuilder.enableIntents(intents);
-        botBuilder.addEventListeners(new DiscordEventListener(),client,this.waiter, new AudioUtils());
+        botBuilder.addEventListeners(new EMPEventListener(),client,this.waiter, new AudioUtils());
         botBuilder.setMemberCachePolicy(MemberCachePolicy.ALL);
         bot = botBuilder.build().awaitReady();
         running = true;

@@ -22,7 +22,7 @@ public class GuildMusicManager {
         scheduler = new TrackScheduler(player);
         player.addListener(scheduler);
         bassActive = false;
-        if(hasEMP(manager)){
+        if(hasEMP()){
             embeddedPlayer = new EmbeddedMultimediaPlayer(AudioUtils.getInstance().retreiveEMP(Satellite.getBot().getGuildById(guildId)), this);
             player.addListener(embeddedPlayer);
         }else{
@@ -30,7 +30,7 @@ public class GuildMusicManager {
         }
     }
 
-    private boolean hasEMP(AudioPlayerManager manager) {
+    public boolean hasEMP() {
         return AudioUtils.getInstance().retreiveEMP(Satellite.getBot().getGuildById(guildId)) != null;
     }
 

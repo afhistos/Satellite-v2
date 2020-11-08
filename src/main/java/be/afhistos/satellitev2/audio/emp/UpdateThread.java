@@ -1,22 +1,25 @@
 package be.afhistos.satellitev2.audio.emp;
 
 import be.afhistos.satellitev2.BotUtils;
+import be.afhistos.satellitev2.audio.GuildMusicManager;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
 public class UpdateThread extends Thread {
-    Message message;
-    public AudioTrack track;
-    EmbedBuilder embed;
-    int songLength;
-    int songPos;
+    private Message message;
+    private AudioTrack track;
+    private EmbedBuilder embed;
+    private GuildMusicManager musicManager;
+    private int songLength;
+    private int songPos;
 
-    public UpdateThread(Message msg, EmbedBuilder embed, AudioTrack t) {
+    public UpdateThread(Message msg, EmbedBuilder embed, AudioTrack t, GuildMusicManager musicManager) {
         this.message = msg;
         this.embed = embed;
         this.track = t;
+        this.musicManager = musicManager;
         songLength = Math.toIntExact(track.getDuration())/1000;//Durée de 'track' en secondes
         songPos = Math.toIntExact(track.getPosition())/1000;
         embed.setDescription(getProgressBar(songPos, songLength));
@@ -27,7 +30,6 @@ public class UpdateThread extends Thread {
     public void run() {
         while(true) {
             songPos = Math.toIntExact(track.getPosition()) / 1000;
-            System.out.println("songPos : "+songPos+"   regulation : "+songPos % 5);
             if(songPos %5 == 0){//Régule les mises à jours envoyées à discord
                 String formattedTime = BotUtils.getTimestamp(songPos * 1000, false) + "**/**" +
                         BotUtils.getTimestamp(songLength * 1000, false);
@@ -58,4 +60,11 @@ public class UpdateThread extends Thread {
         message.editMessage(embed.build()).queue();
     }
 
+    public AudioTrack getTrack() {
+        return track;
+    }
+
+    public void setEmbed(EmbedBuilder embed) {
+        this.embed = embed;
+    }
 }
