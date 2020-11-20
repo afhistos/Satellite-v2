@@ -16,6 +16,7 @@ public class StartHandler {
     private static Writer logWriter = null, dataWriter = null;
     private static Thread mainThread, consoleThread;
 
+
     public static void main(String[] args) throws IOException, LoginException, InterruptedException, SQLException {
         startTime = System.currentTimeMillis();
         props.load(StartHandler.class.getResourceAsStream("/props.properties"));
@@ -37,6 +38,8 @@ public class StartHandler {
             }
         }
         dataWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dataFile), "UTF-8"));
+        BotUtils.log(LogLevel.INFO,"Chargement du système de commandes vocales...", true, true);
+
         BotUtils.log(LogLevel.INFO,"Démarrage des threads nécessaires...", true, true);
         consoleThread = new ConsoleThread();
         consoleThread.start();

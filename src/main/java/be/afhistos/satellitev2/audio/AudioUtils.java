@@ -193,19 +193,19 @@ public class AudioUtils extends ListenerAdapter {
     }
 
     /**
-     *
-     * @param chan The text channel where the result will be written
+     *  @param chan The text channel where the result will be written
      * @param trackUrl the trackUrl (if start with 'ytsearch:', it is a youtube search)
      * @param limit if it is a youtube search, the number of track loaded
+     * @param addFirst set to true to add song on top of queue
      */
-    public void loadAndPlay(final TextChannel chan, final String trackUrl, int limit){
+    public void loadAndPlay(final TextChannel chan, final String trackUrl, int limit, boolean addFirst){
         GuildMusicManager musicManager = getGuildAudioPlayer(chan.getGuild());
         playerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
                 chan.sendMessage("Ajout de "+track.getInfo().title+" à la file d'attente. Taille de la playlist: " +
                         (getGuildAudioPlayer(chan.getGuild()).scheduler.getQueue().size() + 1)+ " morceau(x).").queue();
-                play(musicManager, track);
+                play(musicManager, track, addFirst);
             }
 
             @Override
@@ -225,8 +225,9 @@ public class AudioUtils extends ListenerAdapter {
                         i++;
                     }
                 }
-                chan.sendMessage("Ajout de "+i+" morceau(x) à la playlist, comprennant "+
-                        artists+"et plein d'autres...").queue();
+                String msg = "Ajout de "+playlist.getTracks().size()+" morceau(x) à la playlist, comprennant "+artists+
+                        (i>5 ? " et"+(i > 10 ? " plein":"") : " d'autres");
+                chan.sendMessage(msg).queue();
             }
 
             @Override
@@ -241,8 +242,12 @@ public class AudioUtils extends ListenerAdapter {
         }).isDone();
     }
 
-    private void play(GuildMusicManager musicManager, AudioTrack track) {
-        musicManager.scheduler.queue(track);
+    private void play(GuildMusicManager musicManager, AudioTrack track, boolean addFirst) {
+        if(addFirst){
+           musicManager.scheduler.getQueue().addFirst(track);
+        }else{
+            musicManager.scheduler.queue(track);
+        }
     }
     public boolean skipSong(Guild g){
         GuildMusicManager musicManager = getGuildAudioPlayer(g);
@@ -342,5 +347,4 @@ public class AudioUtils extends ListenerAdapter {
         }
         return channel;
     }
-
 }

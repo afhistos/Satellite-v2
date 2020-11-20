@@ -35,6 +35,13 @@ public class TrackScheduler extends AudioEventAdapter {
         }
         return linkedList;
     }
+
+    public void setQueue(LinkedList<AudioTrack> list){
+        clearQueue();
+        for(AudioTrack track : list){
+            queue.offer(track);
+        }
+    }
     public void shuffle(){
         Collections.shuffle((List<?>) queue);
     }
