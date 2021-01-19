@@ -15,6 +15,7 @@ import java.lang.management.ManagementFactory;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.TimeZone;
@@ -58,13 +59,17 @@ public class BotUtils {
     public static String getFullTimestamp(long ms){
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("CEST"));
         calendar.setTimeInMillis(ms);
-        int sec = calendar.get(Calendar.SECOND);
-        int min = calendar.get(Calendar.MINUTE);
-        int h = calendar.get(Calendar.HOUR_OF_DAY);
-        int d= calendar.get(Calendar.DAY_OF_MONTH);
-        int m = calendar.get(Calendar.MONTH) + 1;
-        int y = calendar.get(Calendar.YEAR);
-        return String.format("%02d-%02d-%02d_%02d'%02d'%02d", d,m,y,h,min,sec);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yy_hh-mm-ss");
+        return sdf.format(calendar.getTime());
+    }
+
+    public static String getFullDate(long ms){
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("CEST"));
+        calendar.setTimeInMillis(ms);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+        return sdf.format(calendar.getTime());
+
+
     }
 
     public static String getTimestamp(long ms, boolean showMs) {
