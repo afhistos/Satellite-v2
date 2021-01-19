@@ -8,20 +8,11 @@ public class VulcainPacket implements Serializable {
     private String key;
     private Object value;
 
-    public VulcainPacket(String key, Object value) {
+    public VulcainPacket(PacketType type,String key, Object value) {
         this.key = key;
         this.value = value;
     }
 
-    public VulcainPacket() {}
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public void setValue(Object value) {
-        this.value = value;
-    }
 
     public String getKey() {
         return key;

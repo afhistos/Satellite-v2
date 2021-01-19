@@ -2,10 +2,7 @@ package be.afhistos.satellitev2.consoleUtils;
 
 import be.afhistos.satellitev2.BotUtils;
 import be.afhistos.satellitev2.Satellite;
-import be.afhistos.satellitev2.StartHandler;
-import be.afhistos.satellitev2.server.SatelliteServer;
 
-import java.io.IOException;
 import java.util.Scanner;
 
 public class ConsoleThread extends Thread{

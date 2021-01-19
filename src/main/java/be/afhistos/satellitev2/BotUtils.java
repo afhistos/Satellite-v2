@@ -2,7 +2,7 @@ package be.afhistos.satellitev2;
 
 import be.afhistos.satellitev2.consoleUtils.LogLevel;
 import be.afhistos.satellitev2.consoleUtils.TextColor;
-import be.afhistos.satellitev2.server.SatelliteServer;
+import be.afhistos.satellitev2.server.ServerThread;
 import net.dv8tion.jda.api.Permission;
 
 import javax.management.Attribute;
@@ -12,6 +12,8 @@ import javax.management.ObjectName;
 import java.awt.*;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Collection;
@@ -116,17 +118,20 @@ public class BotUtils {
 
     public static void stopVulcain(){
         BotUtils.log(LogLevel.WARNING, "Arrêt du serveur Vulcain...", true, true);
-        StartHandler.getSatelliteServer().interrupt();
+        StartHandler.getServerThread().interrupt();
     }
 
     public static void startVulcain(){
         BotUtils.log(LogLevel.WARNING, "Démarrage du serveur Vulcain...", true, true);
-        StartHandler.setSatelliteServer(new SatelliteServer(StartHandler.SERVER_PORT));
+        StartHandler.setServerThread(new ServerThread(StartHandler.SERVER_PORT));
     }
 
     public static void restartVulcain(){
         BotUtils.log(LogLevel.WARNING, "Redémarrage du serveur Vulcain...", true, true);
         stopVulcain();
         startVulcain();
+    }
+    public static String getIpAddress(Socket s){
+        return ((InetSocketAddress)s.getRemoteSocketAddress()).getAddress().getAddress().toString();
     }
 }

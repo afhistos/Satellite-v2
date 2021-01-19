@@ -2,7 +2,7 @@ package be.afhistos.satellitev2;
 
 import be.afhistos.satellitev2.consoleUtils.ConsoleThread;
 import be.afhistos.satellitev2.consoleUtils.LogLevel;
-import be.afhistos.satellitev2.server.SatelliteServer;
+import be.afhistos.satellitev2.server.ServerThread;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 
 import javax.security.auth.login.LoginException;
@@ -16,7 +16,7 @@ public class StartHandler {
     private static File logFile, dataFile;
     private static Writer logWriter = null, dataWriter = null;
     private static Thread mainThread, consoleThread;
-    private static SatelliteServer satelliteServer;
+    private static ServerThread serverThread;
 
     public static int SERVER_PORT = 4444;
 
@@ -49,8 +49,8 @@ public class StartHandler {
         mainThread = new Thread(satellite, "Satellite-Thread");
         mainThread.start();
         BotUtils.log(LogLevel.INFO,"Démarrage du serveur Vulcain...", true, true);
-        satelliteServer = new SatelliteServer(SERVER_PORT);
-        satelliteServer.start();
+        serverThread = new ServerThread(SERVER_PORT);
+        serverThread.start();
 
 
     }
@@ -85,11 +85,11 @@ public class StartHandler {
         return dataWriter;
     }
 
-    public static SatelliteServer getSatelliteServer() {
-        return satelliteServer;
+    public static ServerThread getServerThread() {
+        return serverThread;
     }
 
-    public static void setSatelliteServer(SatelliteServer satelliteServer) {
-        StartHandler.satelliteServer = satelliteServer;
+    public static void setServerThread(ServerThread server) {
+        serverThread = server;
     }
 }
