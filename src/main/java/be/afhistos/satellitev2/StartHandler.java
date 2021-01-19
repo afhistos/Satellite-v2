@@ -2,6 +2,7 @@ package be.afhistos.satellitev2;
 
 import be.afhistos.satellitev2.consoleUtils.ConsoleThread;
 import be.afhistos.satellitev2.consoleUtils.LogLevel;
+import be.afhistos.satellitev2.server.SatelliteServer;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 
 import javax.security.auth.login.LoginException;
@@ -15,6 +16,9 @@ public class StartHandler {
     private static File logFile, dataFile;
     private static Writer logWriter = null, dataWriter = null;
     private static Thread mainThread, consoleThread;
+    private static SatelliteServer satelliteServer;
+
+    public static int SERVER_PORT = 4444;
 
 
     public static void main(String[] args) throws IOException, LoginException, InterruptedException, SQLException {
@@ -38,14 +42,16 @@ public class StartHandler {
             }
         }
         dataWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dataFile), "UTF-8"));
-        BotUtils.log(LogLevel.INFO,"Chargement du système de commandes vocales...", true, true);
-
         BotUtils.log(LogLevel.INFO,"Démarrage des threads nécessaires...", true, true);
         consoleThread = new ConsoleThread();
         consoleThread.start();
         Satellite satellite = new Satellite(startTime, new EventWaiter());
         mainThread = new Thread(satellite, "Satellite-Thread");
         mainThread.start();
+        BotUtils.log(LogLevel.INFO,"Démarrage du serveur Vulcain...", true, true);
+        satelliteServer = new SatelliteServer(SERVER_PORT);
+        satelliteServer.start();
+
 
     }
 
@@ -79,4 +85,11 @@ public class StartHandler {
         return dataWriter;
     }
 
+    public static SatelliteServer getSatelliteServer() {
+        return satelliteServer;
+    }
+
+    public static void setSatelliteServer(SatelliteServer satelliteServer) {
+        StartHandler.satelliteServer = satelliteServer;
+    }
 }

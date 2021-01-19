@@ -2,6 +2,7 @@ package be.afhistos.satellitev2;
 
 import be.afhistos.satellitev2.consoleUtils.LogLevel;
 import be.afhistos.satellitev2.consoleUtils.TextColor;
+import be.afhistos.satellitev2.server.SatelliteServer;
 import net.dv8tion.jda.api.Permission;
 
 import javax.management.Attribute;
@@ -111,5 +112,21 @@ public class BotUtils {
     }
     public static Color getDefaultColor() {
         return new Color(50,50,175);
+    }
+
+    public static void stopVulcain(){
+        BotUtils.log(LogLevel.WARNING, "Arrêt du serveur Vulcain...", true, true);
+        StartHandler.getSatelliteServer().interrupt();
+    }
+
+    public static void startVulcain(){
+        BotUtils.log(LogLevel.WARNING, "Démarrage du serveur Vulcain...", true, true);
+        StartHandler.setSatelliteServer(new SatelliteServer(StartHandler.SERVER_PORT));
+    }
+
+    public static void restartVulcain(){
+        BotUtils.log(LogLevel.WARNING, "Redémarrage du serveur Vulcain...", true, true);
+        stopVulcain();
+        startVulcain();
     }
 }

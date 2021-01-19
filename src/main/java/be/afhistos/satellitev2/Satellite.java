@@ -39,7 +39,7 @@ public class Satellite implements Runnable{
         BotUtils.CAT_PERMISSIONS_DENY =  new LinkedList<>();
         BotUtils.CAT_PERMISSIONS_DENY.add(Permission.VIEW_CHANNEL);
         builder.setStatus(OnlineStatus.IDLE).setPrefix("²");
-        builder.addCommands(new CommandMonitoring(), new CommandStopBot(), new CommandConfinement());
+        builder.addCommands(new CommandMonitoring(), new CommandStopBot(), new CommandConfinement(), new CommandEval());
         builder.addCommands(new CommandBassBoost(), new CommandPlay(),new CommandVolume(),new CommandNowPlaying(),
                 new CommandPlaylist(waiter), new CommandStopMusic(), new CommandSkip(), new CommandShuffle(),
                 new CommandLoop(), new CommandJump(), new CommandPause(),new CommandClearPlaylist(), new CommandAutoRole(),
@@ -59,7 +59,7 @@ public class Satellite implements Runnable{
         bot = botBuilder.build().awaitReady();
         running = true;
         bot.getPresence().setStatus(OnlineStatus.ONLINE);
-        bot.getPresence().setActivity(Activity.watching("Lego Ninjago"));
+        bot.getPresence().setActivity(Activity.competing("Lego Ninjago"));
         loadedTime = System.currentTimeMillis();
         BotUtils.log(LogLevel.INFO, "Le bot est prêt à l'utilisation.\n"+TextColor.BRIGHT_CYAN+"Temps de chargement: "
                 +TextColor.BRIGHT_BLUE+ BotUtils.getTimestamp(loadedTime - st, true), true, false);
@@ -68,17 +68,15 @@ public class Satellite implements Runnable{
     @Override
     public void run() {
         while(true){
-            if(isRunning()){
-                try{
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }else{
-                Thread t = new Thread(new ShutdownBot());
-                t.start();
+            if (!isRunning()) break;
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                break;
             }
         }
+        Thread t = new Thread(new ShutdownBot(), "Thread-shutdown");
+        t.start();
     }
 
     public static boolean isRunning() {

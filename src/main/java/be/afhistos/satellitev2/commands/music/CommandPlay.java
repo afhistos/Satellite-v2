@@ -1,8 +1,11 @@
 package be.afhistos.satellitev2.commands.music;
 
+import be.afhistos.satellitev2.BotUtils;
 import be.afhistos.satellitev2.audio.AudioUtils;
+import be.afhistos.satellitev2.consoleUtils.LogLevel;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import javafx.scene.media.AudioTrack;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDAInfo;
 import net.dv8tion.jda.api.managers.AudioManager;
@@ -30,14 +33,14 @@ public class CommandPlay extends Command {
             }
         }
         AudioUtils.getInstance().getGuildAudioPlayer(e.getGuild());//Load GuildAudioPlayer before playing
-        String query, timecode = "null";
+        String query, timecode = "0";
         int i=20; //Default value
         String first;
         if(e.getArgs().startsWith("http://") || e.getArgs().startsWith("https://")){
             query = e.getArgs();
             if(query.contains("&t=")){
                 timecode = query.split("&t=")[1];
-                timecode.substring(0, timecode.length()-1);
+                timecode = timecode.replaceAll("[^0-9]", "");
             }
         }else{
             query = e.getArgs();
@@ -48,15 +51,10 @@ public class CommandPlay extends Command {
             }
             query = "ytsearch:"+ query;
         }
-        boolean addFirst = e.getArgs().contains("--insert") || e.getArgs().contains("--in");
-        AudioUtils.getInstance().loadAndPlay(e.getTextChannel(),  query, i, addFirst);
-        if(!timecode.equals("null")){
-            long pos = TimeUnit.SECONDS.toMillis(Long.parseLong(timecode));
-            if(pos < AudioUtils.getInstance().getPlayingTrack(e.getGuild()).getDuration()){
-                AudioUtils.getInstance().getPlayingTrack(e.getGuild()).setPosition(pos);
-
-            }
-        }
+        boolean addFirst = e.getArgs().contains("-insert") || e.getArgs().contains("--i");
+        BotUtils.log(LogLevel.WARNING, "addFirst: "+addFirst + "\ntimecode: "+timecode, false, false);
+        long pos = TimeUnit.SECONDS.toMillis(Long.parseLong(timecode));
+        AudioUtils.getInstance().loadAndPlay(e.getTextChannel(),  query, i, addFirst, pos);
 
     }
 }

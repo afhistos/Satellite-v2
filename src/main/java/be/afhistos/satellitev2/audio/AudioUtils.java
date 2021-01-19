@@ -193,18 +193,20 @@ public class AudioUtils extends ListenerAdapter {
     }
 
     /**
-     *  @param chan The text channel where the result will be written
+     * @param chan The text channel where the result will be written
      * @param trackUrl the trackUrl (if start with 'ytsearch:', it is a youtube search)
      * @param limit if it is a youtube search, the number of track loaded
      * @param addFirst set to true to add song on top of queue
+     * @param pos play the track at saved pos (only if queue is empty)
      */
-    public void loadAndPlay(final TextChannel chan, final String trackUrl, int limit, boolean addFirst){
+    public void loadAndPlay(final TextChannel chan, final String trackUrl, int limit, boolean addFirst, long pos){
         GuildMusicManager musicManager = getGuildAudioPlayer(chan.getGuild());
         playerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
                 chan.sendMessage("Ajout de "+track.getInfo().title+" à la file d'attente. Taille de la playlist: " +
                         (getGuildAudioPlayer(chan.getGuild()).scheduler.getQueue().size() + 1)+ " morceau(x).").queue();
+                track.setPosition(pos);
                 play(musicManager, track, addFirst);
             }
 
@@ -240,11 +242,14 @@ public class AudioUtils extends ListenerAdapter {
                 chan.sendMessage("Impossible de jouer le morceau :(\n"+e.getMessage()).queue();
             }
         }).isDone();
+
     }
 
     private void play(GuildMusicManager musicManager, AudioTrack track, boolean addFirst) {
         if(addFirst){
-           musicManager.scheduler.getQueue().addFirst(track);
+           LinkedList<AudioTrack> queueClone = musicManager.scheduler.getQueue();
+           queueClone.addFirst(track);
+            musicManager.scheduler.setQueue(queueClone);
         }else{
             musicManager.scheduler.queue(track);
         }
