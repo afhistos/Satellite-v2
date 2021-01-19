@@ -21,6 +21,7 @@ public class ServerThread extends Thread{
 
     public ServerThread(int port){
         this.setName("Vulcain-Server");
+        System.out.println("ServerThread init");
         this.port = port;
         clients = new ArrayList<ServerCommunicationThread>();
         logs = new File("vulcain-server.log");
@@ -38,6 +39,7 @@ public class ServerThread extends Thread{
     public synchronized void start() {
         super.start();
         log("Démarrage du serveur. Éspérons que le voyage se passe bien.");
+        System.out.println("ServerThread start");
         try{
             serverSocket= new ServerSocket(port);
             log("Serveur démarré sur le port "+port);
@@ -113,7 +115,7 @@ public class ServerThread extends Thread{
 
     public void log(String s){
         StringBuilder sb = new StringBuilder("[");
-        sb.append(BotUtils.getTimestamp(System.currentTimeMillis(), false)).append("] ");
+        sb.append(BotUtils.getFullDate(System.currentTimeMillis())).append("] ");
         sb.append(s);
         try {
             dataWriter.write(sb.toString());

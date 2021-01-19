@@ -25,6 +25,9 @@ public class StartHandler {
         startTime = System.currentTimeMillis();
         props.load(StartHandler.class.getResourceAsStream("/props.properties"));
         BotUtils.log(LogLevel.INFO, "Démarrage de Satellite v"+props.getProperty("version"), true, false);
+        Runtime.getRuntime().addShutdownHook(new Thread(()->{
+            Satellite.getBot().shutdownNow();
+        }));
         logFile = new File("Satellite-log-"+BotUtils.getFullTimestamp(startTime)+".log");
         if(logFile.createNewFile()){
             BotUtils.log(LogLevel.CONFIG, "Fichier de `CommandWatcher` ("+logFile.getName()+") créé!", true, false);
