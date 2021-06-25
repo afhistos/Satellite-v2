@@ -2,11 +2,11 @@ package be.afhistos.satellitev2;
 
 import be.afhistos.satellitev2.audio.AudioUtils;
 import be.afhistos.satellitev2.audio.emp.EMPEventListener;
+import be.afhistos.satellitev2.consoleUtils.TextColor;
+import be.afhistos.satellitev2.listeners.CommandWatcher;
 import be.afhistos.satellitev2.commands.*;
 import be.afhistos.satellitev2.commands.music.*;
 import be.afhistos.satellitev2.consoleUtils.LogLevel;
-import be.afhistos.satellitev2.consoleUtils.TextColor;
-import be.afhistos.satellitev2.listeners.CommandWatcher;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
@@ -33,18 +33,17 @@ public class Satellite implements Runnable{
     private long loadedTime;
     private final EventWaiter waiter;
 
-
     public Satellite(long st, EventWaiter waiter) throws LoginException, InterruptedException, SQLException {
         this.waiter = waiter;
         BotUtils.CAT_PERMISSIONS_DENY =  new LinkedList<>();
         BotUtils.CAT_PERMISSIONS_DENY.add(Permission.VIEW_CHANNEL);
-        builder.setStatus(OnlineStatus.IDLE).setPrefix("²");
+        builder.setStatus(OnlineStatus.ONLINE).setPrefix("²");
         builder.addCommands(new CommandMonitoring(), new CommandStopBot(), new CommandConfinement(), new CommandEval());
         builder.addCommands(new CommandBassBoost(), new CommandPlay(),new CommandVolume(),new CommandNowPlaying(),
                 new CommandPlaylist(waiter), new CommandStopMusic(), new CommandSkip(), new CommandShuffle(),
-                new CommandLoop(), new CommandJump(), new CommandPause(),new CommandClearPlaylist(), new CommandAutoRole(),
+                new CommandLoop(), new CommandJump(), new CommandPause(),new CommandClearPlaylist(),
                 new CommandEMPManager(), new CommandHelp());
-        builder.setOwnerId("279597100961103872").setCoOwnerIds("225261996709380106");
+        builder.setOwnerId("279597100961103872").setCoOwnerIds("378598433314963467");
         builder.setEmojis("\u2705", "\u26a0", "\u274c");
         builder.useHelpBuilder(false).setListener(new CommandWatcher());
         client = builder.build();
@@ -58,10 +57,9 @@ public class Satellite implements Runnable{
         botBuilder.setMemberCachePolicy(MemberCachePolicy.ALL);
         bot = botBuilder.build().awaitReady();
         running = true;
-        bot.getPresence().setStatus(OnlineStatus.ONLINE);
         bot.getPresence().setActivity(Activity.competing("Lego Ninjago"));
         loadedTime = System.currentTimeMillis();
-        BotUtils.log(LogLevel.INFO, "Le bot est prêt à l'utilisation.\n"+TextColor.BRIGHT_CYAN+"Temps de chargement: "
+        BotUtils.log(LogLevel.INFO, "Le bot est prêt à l'utilisation.\n"+ TextColor.BRIGHT_CYAN+"Temps de chargement: "
                 +TextColor.BRIGHT_BLUE+ BotUtils.getTimestamp(loadedTime - st, true), true, false);
     }
 
@@ -93,13 +91,5 @@ public class Satellite implements Runnable{
 
     public static JDA getBot() {
         return bot;
-    }
-
-    public static CommandClientBuilder getBuilder() {
-        return builder;
-    }
-
-    public EventWaiter getWaiter() {
-        return waiter;
     }
 }

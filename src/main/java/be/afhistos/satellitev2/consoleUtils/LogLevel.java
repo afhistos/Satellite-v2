@@ -1,6 +1,5 @@
 package be.afhistos.satellitev2.consoleUtils;
 
-import be.afhistos.satellitev2.consoleUtils.TextColor;
 
 public enum LogLevel {
     INFO("Info"),

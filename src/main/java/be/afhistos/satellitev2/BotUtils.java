@@ -2,8 +2,8 @@ package be.afhistos.satellitev2;
 
 import be.afhistos.satellitev2.consoleUtils.LogLevel;
 import be.afhistos.satellitev2.consoleUtils.TextColor;
-import be.afhistos.satellitev2.server.ServerThread;
 import net.dv8tion.jda.api.Permission;
+import org.java_websocket.WebSocket;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -12,8 +12,7 @@ import javax.management.ObjectName;
 import java.awt.*;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
-import java.net.InetSocketAddress;
-import java.net.Socket;
+import java.net.*;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -68,8 +67,6 @@ public class BotUtils {
         calendar.setTimeInMillis(ms);
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
         return sdf.format(calendar.getTime());
-
-
     }
 
     public static String getTimestamp(long ms, boolean showMs) {
@@ -121,22 +118,20 @@ public class BotUtils {
         return new Color(50,50,175);
     }
 
-    public static void stopVulcain(){
-        BotUtils.log(LogLevel.WARNING, "Arrêt du serveur Vulcain...", true, true);
-        StartHandler.getServerThread().interrupt();
+    public static String getIpAddress(WebSocket webSocket){
+        return webSocket.getRemoteSocketAddress().getAddress().getHostAddress();
     }
 
-    public static void startVulcain(){
-        BotUtils.log(LogLevel.WARNING, "Démarrage du serveur Vulcain...", true, true);
-        StartHandler.setServerThread(new ServerThread(StartHandler.SERVER_PORT));
-    }
-
-    public static void restartVulcain(){
-        BotUtils.log(LogLevel.WARNING, "Redémarrage du serveur Vulcain...", true, true);
-        stopVulcain();
-        startVulcain();
-    }
-    public static String getIpAddress(Socket s){
-        return ((InetSocketAddress)s.getRemoteSocketAddress()).getAddress().getAddress().toString();
+    public static String getIpAddress(Socket s){ //From https://stackoverflow.com/a/22691011
+        SocketAddress socketAddress = s.getRemoteSocketAddress();
+        if (socketAddress instanceof InetSocketAddress) {
+            InetAddress inetAddress = ((InetSocketAddress)socketAddress).getAddress();
+            if (inetAddress instanceof Inet4Address || inetAddress instanceof Inet6Address)
+                return String.valueOf(inetAddress);
+            else
+                return "[Aucune adresse IP]";
+        } else {
+            return "[Ce socket n'utilise pas un protocole internet]";
+        }
     }
 }

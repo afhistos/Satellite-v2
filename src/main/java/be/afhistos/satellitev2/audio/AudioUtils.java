@@ -248,7 +248,7 @@ public class AudioUtils extends ListenerAdapter {
     private void play(GuildMusicManager musicManager, AudioTrack track, boolean addFirst) {
         if(addFirst){
            LinkedList<AudioTrack> queueClone = musicManager.scheduler.getQueue();
-           queueClone.addFirst(track);
+           queueClone.offerFirst(track);
             musicManager.scheduler.setQueue(queueClone);
         }else{
             musicManager.scheduler.queue(track);
@@ -342,7 +342,7 @@ public class AudioUtils extends ListenerAdapter {
         }
     }
 
-    public TextChannel retreiveEMP(Guild g){
+    public TextChannel retrieveEMP(Guild g){
         TextChannel channel = null;
         for(TextChannel c : g.getTextChannelsByName("sate-lecteur", false)){
             if(c.getTopic().startsWith("emp-channel-"+g.getId())){

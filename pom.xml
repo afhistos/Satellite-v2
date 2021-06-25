@@ -6,7 +6,7 @@
 
     <groupId>be.afhistos</groupId>
     <artifactId>Satellite-v2</artifactId>
-    <version>1.0.9-dev1</version>
+    <version>1.1.1-fix1</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -21,6 +21,11 @@
             <url>https://jcenter.bintray.com</url>
         </repository>
         <repository>
+            <id>dv8tion</id>
+            <name>m2-dv8tion</name>
+            <url>https://m2.dv8tion.net/releases</url>
+        </repository>
+        <repository>
             <id>bintray-sedmelluq</id>
             <url>https://dl.bintray.com/sedmelluq/com.sedmelluq</url>
         </repository>
@@ -28,26 +33,61 @@
             <id>jitpack</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>SocketServerObject</id>
+            <url>https://raw.githubusercontent.com/afhistos/SocketServerObject/mvn-repo/</url>
+        </repository>
     </repositories>
     <dependencies>
+        <dependency>
+            <groupId>be.afhistos</groupId>
+            <artifactId>SocketServerObject</artifactId>
+            <version>1.0.7-fix4</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.websocket</groupId>
+            <artifactId>javax.websocket-api</artifactId>
+            <version>1.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.gretty</groupId>
+            <artifactId>gretty</artifactId>
+            <version>2.2.0</version>
+        </dependency>
         <dependency>
             <groupId>com.jagrosh</groupId>
             <artifactId>jda-utilities</artifactId>
             <version>3.0.5</version>
             <scope>compile</scope>
             <type>pom</type>
-
+        </dependency>
+        <dependency>
+            <groupId>org.java-websocket</groupId>
+            <artifactId>Java-WebSocket</artifactId>
+            <version>1.5.1</version>
         </dependency>
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>4.2.0_227</version>
+            <version>4.3.0_283</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.6</version>
         </dependency>
         <dependency>
             <groupId>com.sedmelluq</groupId>
             <artifactId>lavaplayer</artifactId>
             <version>1.3.65</version>
         </dependency>
+        <dependency>
+            <groupId>org.java-websocket</groupId>
+            <artifactId>Java-WebSocket</artifactId>
+            <version>1.5.1</version>
+        </dependency>
+
         <dependency>
             <groupId>com.sedmelluq</groupId>
             <artifactId>lavaplayer-natives-extra</artifactId>
@@ -68,6 +108,11 @@
             <artifactId>junit-jupiter</artifactId>
             <version>RELEASE</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5-20081211</version>
         </dependency>
     </dependencies>
     <build>

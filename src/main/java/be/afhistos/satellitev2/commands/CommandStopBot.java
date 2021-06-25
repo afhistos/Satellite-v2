@@ -16,7 +16,6 @@ public class CommandStopBot extends Command {
 
     @Override
     protected void execute(CommandEvent e) {
-        e.reactSuccess();
         Satellite.setRunning(false);
     }
 }

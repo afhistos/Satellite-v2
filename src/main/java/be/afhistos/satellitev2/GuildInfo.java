@@ -1,9 +1,11 @@
-package be.afhistos.satellitev2.server;
+package be.afhistos.satellitev2;
 
 import java.io.Serializable;
 
 public class GuildInfo implements Serializable {
-    private static final long serialVersionUID = 1L;
+
+    public static final long serialVersionUID = 2310L;
+
 
     private String name, id, owner;
 
