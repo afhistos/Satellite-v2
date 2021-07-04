@@ -7,11 +7,7 @@ public class ShutdownBot implements Runnable {
     @Override
     public void run() {
         if(StartHandler.getServer() != null){
-            try {
-                StartHandler.getServer().stop();
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-            }
+            StartHandler.getVulcainThread().interrupt();
         }
         StartHandler.getConsoleThread().interrupt();
         Satellite.getBot().shutdownNow();

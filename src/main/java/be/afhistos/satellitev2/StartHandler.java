@@ -2,8 +2,10 @@ package be.afhistos.satellitev2;
 
 import be.afhistos.satellitev2.consoleUtils.ConsoleThread;
 import be.afhistos.satellitev2.consoleUtils.LogLevel;
+import be.afhistos.satellitev2.server.ServerThread;
 import be.afhistos.satellitev2.server.VulcainServer;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import com.sun.security.ntlm.Server;
 import org.java_websocket.server.WebSocketServer;
 
 import javax.security.auth.login.LoginException;
@@ -16,7 +18,7 @@ public class StartHandler {
     private static Properties props = new Properties();
     private static File logFile;
     private static Writer logWriter = null;
-    private static Thread mainThread, consoleThread;
+    private static Thread mainThread, consoleThread, vulcainThread;
 
     private static WebSocketServer vulcain;
 
@@ -39,15 +41,11 @@ public class StartHandler {
         Satellite satellite = new Satellite(startTime, new EventWaiter());
         mainThread = new Thread(satellite, "Satellite-Thread");
         mainThread.start();
-        /*
-        BotUtils.log(LogLevel.INFO,"Démarrage du serveur Vulcain...", true, true);
-        server = new ObjectServerImpl(); //Démarre sur le port 44444 (port par défaut)
-        server.addListener(new VulcainListener("vulcain.log"));
-        server.start();
-        BotUtils.log(LogLevel.INFO,"Serveur Vulcain démarré", true, true);
-         */
         vulcain = new VulcainServer(44444);
-        vulcain.run();
+        vulcainThread = new ServerThread();
+        vulcainThread.start();
+        BotUtils.log(LogLevel.INFO ,"Serveur Vulcain démarré", true, true);
+
 
 
     }
@@ -76,5 +74,9 @@ public class StartHandler {
 
     public static WebSocketServer getServer() {
         return vulcain;
+    }
+
+    public static Thread getVulcainThread() {
+        return vulcainThread;
     }
 }

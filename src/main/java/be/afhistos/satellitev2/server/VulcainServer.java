@@ -3,18 +3,20 @@ package be.afhistos.satellitev2.server;
 
 import be.afhistos.satellitev2.BotUtils;
 import be.afhistos.satellitev2.Satellite;
+import be.afhistos.satellitev2.consoleUtils.LogLevel;
 import net.dv8tion.jda.api.entities.Guild;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 import org.json.JSONArray;
+import org.json.JSONML;
 import org.json.JSONObject;
 
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
-public class VulcainServer extends WebSocketServer {
+public class VulcainServer extends WebSocketServer{
     public int port;
     private JSONObject firstJson;
 
@@ -36,33 +38,33 @@ public class VulcainServer extends WebSocketServer {
     @Override
     public void onOpen(WebSocket webSocket, ClientHandshake clientHandshake) {
         webSocket.send(firstJson.toString());
-        webSocket.sendPing();
-        System.out.println("["+BotUtils.getTimestamp(System.currentTimeMillis(), false)+"] nouvelle connexion depuis: "+webSocket.getRemoteSocketAddress());
+        BotUtils.log(LogLevel.INFO, "Nouvelle connexion depuis: "+webSocket.getRemoteSocketAddress(), true, true);
     }
 
     @Override
     public void onClose(WebSocket webSocket, int code, String reason, boolean remote) {
-        System.out.println("closed " + webSocket.getRemoteSocketAddress() + " with exit code " + code + " additional info: " + reason);
+        BotUtils.log(LogLevel.INFO, "fermeture de la connexion "+webSocket.getRemoteSocketAddress() + " depuis le "+(remote ? "client": "serveur") + ". Code: "+code, true, true);
     }
 
     @Override
     public void onMessage(WebSocket webSocket, String message) {
-        System.out.println("received message from "	+ webSocket.getRemoteSocketAddress() + ": " + message);
+        BotUtils.log(LogLevel.INFO, "Message WebSocket ["+webSocket.getRemoteSocketAddress()+"]: "+message, true, true);
+
     }
 
     @Override
     public void onMessage( WebSocket conn, ByteBuffer message ) {
-        System.out.println("received ByteBuffer from "	+ conn.getRemoteSocketAddress());
+        BotUtils.log(LogLevel.INFO, "Message WebSocket (ByteBuff) ["+conn.getRemoteSocketAddress()+"]: "+message, true, true);
     }
     @Override
     public void onError(WebSocket webSocket, Exception e) {
-        System.err.println("an error occurred on connection " + webSocket.getRemoteSocketAddress()  + ":" + e);
+        BotUtils.log(LogLevel.ERROR, "Erreur WebSocket ["+webSocket.getRemoteSocketAddress()+"]: "+e.getMessage(), true, true);
 
     }
 
     @Override
     public void onStart() {
-        System.out.println("server started successfully");
+        BotUtils.log(LogLevel.INFO, "[Inner]Serveur WebSocket démarré", true, true);
     }
 
 }
