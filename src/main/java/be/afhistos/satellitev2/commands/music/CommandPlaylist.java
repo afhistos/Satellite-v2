@@ -1,29 +1,27 @@
 package be.afhistos.satellitev2.commands.music;
 
 import be.afhistos.satellitev2.BotUtils;
-import be.afhistos.satellitev2.Satellite;
 import be.afhistos.satellitev2.audio.AudioUtils;
 import be.afhistos.satellitev2.audio.GuildMusicManager;
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
-import com.jagrosh.jdautilities.menu.Paginator;
+import be.afhistos.satellitev2.commands.handler.Category;
+import be.afhistos.satellitev2.commands.handler.CommandBase;
+import be.afhistos.satellitev2.commands.handler.CommandEvent;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
-public class CommandPlaylist extends Command {
+public class CommandPlaylist extends CommandBase {
 
-    private final Paginator.Builder pBuilder;
-    public CommandPlaylist(EventWaiter waiter){
+    //private final Paginator.Builder pBuilder;
+    public CommandPlaylist(){
         this.name = "playlist";
         this.aliases = new String[]{"pl", "playl", "plist","listSongs"};
         this.category = new Category("Musique");
         this.arguments = "[N° de page || \"tiny\"]";
         this.guildOnly = true;
         this.help = "Affiche les 10 prochains morceaux de la playlist.";
-        pBuilder = new Paginator.Builder().setColumns(1)
+       /* pBuilder = new Paginator.Builder().setColumns(1)
                 .showPageNumbers(true)
                 .waitOnSinglePage(false)
                 .useNumberedItems(true)
@@ -32,10 +30,13 @@ public class CommandPlaylist extends Command {
                 })
                 .setTimeout(1, TimeUnit.MINUTES)
                 .setEventWaiter(waiter);
+        */
     }
 
     @Override
     protected void execute(CommandEvent e) {
+        e.reply(AudioUtils.getInstance().getPlaylistString(e.getGuild()));
+        /*
         if(!e.getArgs().isEmpty() && e.getArgs().equalsIgnoreCase("tiny")){
             e.reply(AudioUtils.getInstance().getPlaylistString(e.getGuild()));
             return;
@@ -45,7 +46,7 @@ public class CommandPlaylist extends Command {
             try{
                 page = Integer.parseInt(e.getArgs());
             }catch (NumberFormatException ex) {
-                e.reply(e.getClient().getError() + "`" + e.getArgs() + "` n'est pas un nombre valide!");
+                e.reply(e.getHandler().getError() + "`" + e.getArgs() + "` n'est pas un nombre valide!");
                 return;
             }
         }
@@ -69,5 +70,7 @@ public class CommandPlaylist extends Command {
                 "\n  Durée de la playlist: "+ BotUtils.getTimestamp(duration, false))
                 .setUsers(e.getAuthor()).build();
         p.paginate(e.getChannel(), page);
+
+         */
     }
 }

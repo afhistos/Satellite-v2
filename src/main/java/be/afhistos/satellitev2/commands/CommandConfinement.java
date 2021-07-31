@@ -1,11 +1,12 @@
 package be.afhistos.satellitev2.commands;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
+import be.afhistos.satellitev2.commands.handler.Category;
+import be.afhistos.satellitev2.commands.handler.CommandBase;
+import be.afhistos.satellitev2.commands.handler.CommandEvent;
 /*
     Specific command for owners
  */
-public class CommandConfinement extends Command {
+public class CommandConfinement extends CommandBase {
     private String CONFINED_ROLE_ID = "610088023295524884";
     private String OP_ROLE_ID = "583291626261184543";
 

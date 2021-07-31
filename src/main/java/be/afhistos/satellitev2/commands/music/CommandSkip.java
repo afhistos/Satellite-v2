@@ -1,10 +1,11 @@
 package be.afhistos.satellitev2.commands.music;
 
 import be.afhistos.satellitev2.audio.AudioUtils;
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
+import be.afhistos.satellitev2.commands.handler.Category;
+import be.afhistos.satellitev2.commands.handler.CommandBase;
+import be.afhistos.satellitev2.commands.handler.CommandEvent;
 
-public class CommandSkip extends Command {
+public class CommandSkip extends CommandBase {
 
     public CommandSkip(){
         this.name = "skip";
@@ -20,13 +21,13 @@ public class CommandSkip extends Command {
             try{
                 skip = Integer.parseInt(e.getArgs());
             }catch (NumberFormatException ign){
-                e.reply(e.getClient().getError()+" Nombre invalide! Saut de 1 morceau...");
+                e.reply(e.getHandler().getError()+" Nombre invalide! Saut de 1 morceau...");
             }
         }
         if(skip > AudioUtils.getInstance().getGuildAudioPlayer(e.getGuild()).scheduler.getQueue().size()){
             e.replyWarning("La playlist n'est pas aussi grande! arrêt de la musique en cours...", message -> {
                 AudioUtils.getInstance().stopMusic(e.getGuild());
-                message.addReaction(e.getClient().getSuccess()).queue();
+                message.addReaction(e.getHandler().getSuccess()).queue();
             });
             return;
 

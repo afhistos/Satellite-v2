@@ -2,17 +2,15 @@ package be.afhistos.satellitev2.commands.music;
 
 import be.afhistos.satellitev2.BotUtils;
 import be.afhistos.satellitev2.audio.AudioUtils;
+import be.afhistos.satellitev2.commands.handler.Category;
+import be.afhistos.satellitev2.commands.handler.CommandBase;
+import be.afhistos.satellitev2.commands.handler.CommandEvent;
 import be.afhistos.satellitev2.consoleUtils.LogLevel;
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import javafx.scene.media.AudioTrack;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDAInfo;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 import java.util.concurrent.TimeUnit;
 
-public class CommandPlay extends Command {
+public class CommandPlay extends CommandBase {
 
     public CommandPlay(){
         this.name = "play";

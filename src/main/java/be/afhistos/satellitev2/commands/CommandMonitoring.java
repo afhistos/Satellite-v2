@@ -1,15 +1,17 @@
 package be.afhistos.satellitev2.commands;
 
 import be.afhistos.satellitev2.BotUtils;
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
+import be.afhistos.satellitev2.commands.handler.Category;
+import be.afhistos.satellitev2.commands.handler.CommandBase;
+import be.afhistos.satellitev2.commands.handler.CommandEvent;
+import net.dv8tion.jda.api.interactions.commands.Command;
 
-public class CommandMonitoring extends Command{
+public class CommandMonitoring extends CommandBase {
 
     public CommandMonitoring(){
         this.name = "monitoring";
         this.aliases = new String[]{"showcpu", "cpu", "monitor"};
-        this.category= new Command.Category("Divers");
+        this.category= new Category("Divers");
         this.help = "Affiche l'utilisation des ressources utilisées par le bot. (Propriétaire)";
         this.ownerCommand = true;
         this.guildOnly = false;

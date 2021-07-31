@@ -122,6 +122,14 @@ public class CommandEvent {
         }
     }
 
+    public void replyInDm(MessageEmbed embed){
+        replyInDm(embed, null, null);
+    }
+
+    public void replyInDm(MessageEmbed embed, Consumer<Message> success){
+        replyInDm(embed, success, null);
+    }
+
     public void replyInDm(MessageEmbed embed, Consumer<Message> success, Consumer<Throwable> failure){
         if(event.isFromType(ChannelType.PRIVATE)){
             reply(embed, success, failure);

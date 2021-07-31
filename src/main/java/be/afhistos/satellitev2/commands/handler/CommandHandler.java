@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class CommandHandler implements EventListener {
     private String prefix;
@@ -20,6 +21,7 @@ public class CommandHandler implements EventListener {
     private String ownerId;
     private ArrayList<String> coOwnerIds = new ArrayList<>();
     private ArrayList<CommandBase> commands = new ArrayList<>();
+    private ArrayList<CommandListener> listeners = new ArrayList<>();
 
     public CommandHandler(){
 
@@ -90,9 +92,8 @@ public class CommandHandler implements EventListener {
         }
     }
 
-    @Override
-    public void onEvent(@NotNull GenericEvent genericEvent) {
-
+    public List<CommandBase> getCommands(){
+        return commands;
     }
 
     public void addCommands(CommandBase... newCommands) {
@@ -100,5 +101,15 @@ public class CommandHandler implements EventListener {
     }
 
     public void setListener(CommandListener listener) {
+        this.listeners.add(listener);
+    }
+
+    public void removeListener(CommandListener listener){
+        this.listeners.remove(listener);
+    }
+
+    @Override
+    public void onEvent(@NotNull GenericEvent event) {
+
     }
 }

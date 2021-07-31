@@ -1,15 +1,18 @@
 package be.afhistos.satellitev2.commands;
 
 import be.afhistos.satellitev2.Satellite;
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
+import be.afhistos.satellitev2.commands.handler.Category;
+import be.afhistos.satellitev2.commands.handler.CommandBase;
+import be.afhistos.satellitev2.commands.handler.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 
-import java.lang.reflect.Array;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
-public class CommandHelp extends Command {
-    HashMap<Category, ArrayList<Command>> map = new HashMap<>();
+public class CommandHelp extends CommandBase {
+    HashMap<Category, ArrayList<CommandBase>> map = new HashMap<>();
     private boolean loaded = false;
 
     public CommandHelp(){
@@ -26,14 +29,14 @@ public class CommandHelp extends Command {
             load();
             loaded= true;
         }
-        String pf = e.getClient().getPrefix();
+        String pf = e.getHandler().getPrefix();
         if(e.getArgs().isEmpty()){
             StringBuilder builder = new StringBuilder("Commandes de **" + e.getSelfUser().getName() + "**:\n");
-            for(Map.Entry<Category, ArrayList<Command>> entry : map.entrySet()){
+            for(Map.Entry<Category, ArrayList<CommandBase>> entry : map.entrySet()){
                 Category key = entry.getKey();
-                ArrayList<Command> value = entry.getValue();
+                ArrayList<CommandBase> value = entry.getValue();
                 builder.append("\n »  __**").append(key.getName()).append("**__:").append("\n\n");
-                for(Command c : value){
+                for(CommandBase c : value){
                     if(c.isHidden() && (!e.isOwner())){
                         continue;
                     }
@@ -46,7 +49,7 @@ public class CommandHelp extends Command {
         }else{
             boolean found = false;
             EmbedBuilder builder = new EmbedBuilder();
-            for(Command c : Satellite.getClient().getCommands()){
+            for(CommandBase c : Satellite.getHandler().getCommands()){
                 if(c.getName().equalsIgnoreCase(e.getArgs())&& (c.isHidden() && (!e.isOwner()))) {
                     found = true;
                     builder.setTitle("Informations de la commande __" + c.getName() + "__");
@@ -64,7 +67,7 @@ public class CommandHelp extends Command {
             if(!found){
                 builder.setTitle("Aucune commande n'est disponible sous le nom `"+e.getArgs()+"`");
                 builder.setDescription("Tu peux voir toutes les commandes disponibles avec "
-                        +e.getClient().getPrefix()+ name);
+                        +e.getHandler().getPrefix()+ name);
             }
             e.replyInDm(builder.build());
         }
@@ -73,10 +76,10 @@ public class CommandHelp extends Command {
 
     //load the map only at load, the commands will not be modified after start
     private void load(){
-        Iterator iterator = Satellite.getClient().getCommands().iterator();
-        Command command;
+        Iterator<CommandBase> iterator = Satellite.getHandler().getCommands().iterator();
+        CommandBase command;
         while(iterator.hasNext()){
-            command = (Command)iterator.next();
+            command = (CommandBase)iterator.next();
             Category cat = command.getCategory();
             if(cat == null){
                 cat = new Category("Commandes en test");
@@ -86,11 +89,11 @@ public class CommandHelp extends Command {
     }
 
     //Code adapted from https://stackoverflow.com/a/12134901
-    private synchronized void addToList(Category mapKey, Command myItem) {
-        ArrayList<Command> itemsList = map.get(mapKey);
+    private synchronized void addToList(Category mapKey, CommandBase myItem) {
+        ArrayList<CommandBase> itemsList = map.get(mapKey);
         // if list does not exist create it
         if(itemsList == null) {
-            itemsList = new ArrayList<Command>();
+            itemsList = new ArrayList<>();
             itemsList.add(myItem);
             map.put(mapKey, itemsList);
         } else {

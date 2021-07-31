@@ -1,11 +1,11 @@
 package be.afhistos.satellitev2.commands.music;
 
 import be.afhistos.satellitev2.audio.AudioUtils;
-import be.afhistos.satellitev2.audio.GuildMusicManager;
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
+import be.afhistos.satellitev2.commands.handler.Category;
+import be.afhistos.satellitev2.commands.handler.CommandBase;
+import be.afhistos.satellitev2.commands.handler.CommandEvent;
 
-public class CommandStopMusic extends Command {
+public class CommandStopMusic extends CommandBase {
 
     public CommandStopMusic(){
         this.name ="stopMusic";

@@ -1,19 +1,15 @@
 package be.afhistos.satellitev2.commands.music;
 
 import be.afhistos.satellitev2.BotUtils;
-import be.afhistos.satellitev2.Satellite;
 import be.afhistos.satellitev2.audio.AudioUtils;
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.EmbedBuilder;
+import be.afhistos.satellitev2.commands.handler.CommandBase;
+import be.afhistos.satellitev2.commands.handler.CommandEvent;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 
-import javax.xml.soap.Text;
 import java.time.Instant;
 
-public class CommandEMPManager extends Command {
+public class CommandEMPManager extends CommandBase {
     public String TOPIC = "emp-channel-<guildID>\nCe salon héberge le lecteur multimédia. Afin de garantir son " +
             "fonctionnement, veuillez ne pas modifier son nom, sa description ni les permissions de Satellite.\n" +
             "Il aura besoin des permissions suivantes: Envoyer des embeds, des liens, éditer ses messages, " +
@@ -22,8 +18,8 @@ public class CommandEMPManager extends Command {
     public CommandEMPManager(){
         this.name = "EMPManager";
         this.aliases = new String[]{"embedplayer", "emp", "playermanager"};
-        this.botPermissions = new Permission[]{Permission.MESSAGE_EMBED_LINKS};
-        this.userPermissions = new Permission[]{Permission.ADMINISTRATOR};
+        this.botRequiredPermissions = new Permission[]{Permission.MESSAGE_EMBED_LINKS};
+        this.userRequiredPermissions = new Permission[]{Permission.ADMINISTRATOR};
         this.guildOnly =true;
         this.arguments = "help";
         this.help = "Commande-mère pour le Lecteur Multimédia Intégré";

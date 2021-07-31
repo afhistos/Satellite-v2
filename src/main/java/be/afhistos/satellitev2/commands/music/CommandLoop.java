@@ -1,10 +1,11 @@
 package be.afhistos.satellitev2.commands.music;
 
 import be.afhistos.satellitev2.audio.AudioUtils;
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
+import be.afhistos.satellitev2.commands.handler.Category;
+import be.afhistos.satellitev2.commands.handler.CommandBase;
+import be.afhistos.satellitev2.commands.handler.CommandEvent;
 
-public class CommandLoop extends Command {
+public class CommandLoop extends CommandBase {
 
     public CommandLoop(){
         this.name = "loop";

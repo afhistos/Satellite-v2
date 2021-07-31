@@ -3,15 +3,15 @@ package be.afhistos.satellitev2.commands;
 import be.afhistos.satellitev2.BotUtils;
 import be.afhistos.satellitev2.Satellite;
 import be.afhistos.satellitev2.StartHandler;
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
+import be.afhistos.satellitev2.commands.handler.CommandBase;
+import be.afhistos.satellitev2.commands.handler.CommandEvent;
 import net.dv8tion.jda.api.entities.ChannelType;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-public class CommandEval extends Command {
+public class CommandEval extends CommandBase {
 
     private ScriptEngine engine;
 
