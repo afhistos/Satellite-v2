@@ -1,10 +1,10 @@
 package be.afhistos.satellitev2.commands;
 
 import be.afhistos.satellitev2.Satellite;
-import be.afhistos.satellitev2.commands.handler.CommandBase;
-import be.afhistos.satellitev2.commands.handler.CommandEvent;
+import com.jagrosh.jdautilities.command.Command;
+import com.jagrosh.jdautilities.command.CommandEvent;
 
-public class CommandStopBot extends CommandBase {
+public class CommandStopBot extends Command {
 
     public CommandStopBot(){
         this.name= "stopbot";

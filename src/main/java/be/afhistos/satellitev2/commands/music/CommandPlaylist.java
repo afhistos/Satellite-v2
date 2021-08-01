@@ -1,27 +1,24 @@
 package be.afhistos.satellitev2.commands.music;
 
-import be.afhistos.satellitev2.BotUtils;
 import be.afhistos.satellitev2.audio.AudioUtils;
-import be.afhistos.satellitev2.audio.GuildMusicManager;
-import be.afhistos.satellitev2.commands.handler.Category;
-import be.afhistos.satellitev2.commands.handler.CommandBase;
-import be.afhistos.satellitev2.commands.handler.CommandEvent;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import com.jagrosh.jdautilities.command.Command;
+import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import com.jagrosh.jdautilities.menu.Paginator;
 
-import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
-public class CommandPlaylist extends CommandBase {
+public class CommandPlaylist extends Command {
 
-    //private final Paginator.Builder pBuilder;
-    public CommandPlaylist(){
+    private final Paginator.Builder pBuilder;
+    public CommandPlaylist(EventWaiter waiter){
         this.name = "playlist";
         this.aliases = new String[]{"pl", "playl", "plist","listSongs"};
         this.category = new Category("Musique");
         this.arguments = "[N° de page || \"tiny\"]";
         this.guildOnly = true;
         this.help = "Affiche les 10 prochains morceaux de la playlist.";
-       /* pBuilder = new Paginator.Builder().setColumns(1)
+        pBuilder = new Paginator.Builder().setColumns(1)
                 .showPageNumbers(true)
                 .waitOnSinglePage(false)
                 .useNumberedItems(true)
@@ -30,7 +27,7 @@ public class CommandPlaylist extends CommandBase {
                 })
                 .setTimeout(1, TimeUnit.MINUTES)
                 .setEventWaiter(waiter);
-        */
+
     }
 
     @Override

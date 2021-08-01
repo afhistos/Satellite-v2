@@ -1,12 +1,10 @@
 package be.afhistos.satellitev2.commands;
 
 import be.afhistos.satellitev2.BotUtils;
-import be.afhistos.satellitev2.commands.handler.Category;
-import be.afhistos.satellitev2.commands.handler.CommandBase;
-import be.afhistos.satellitev2.commands.handler.CommandEvent;
-import net.dv8tion.jda.api.interactions.commands.Command;
+import com.jagrosh.jdautilities.command.Command;
+import com.jagrosh.jdautilities.command.CommandEvent;
 
-public class CommandMonitoring extends CommandBase {
+public class CommandMonitoring extends Command {
 
     public CommandMonitoring(){
         this.name = "monitoring";
