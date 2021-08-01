@@ -16,7 +16,7 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
-public class VulcainServer extends WebSocketServer{
+public class VulcainServer extends WebSocketServer implements Runnable {
     public int port;
     private JSONObject firstJson;
 

@@ -52,7 +52,7 @@ public class Satellite implements Runnable{
         EnumSet<CacheFlag> flags = EnumSet.of(CacheFlag.CLIENT_STATUS, CacheFlag.VOICE_STATE);
         botBuilder.enableCache(flags);
         botBuilder.enableIntents(intents);
-        botBuilder.addEventListeners(new EMPEventListener(), builder, new AudioUtils());
+        botBuilder.addEventListeners(new EMPEventListener(), client, new AudioUtils());
         botBuilder.setMemberCachePolicy(MemberCachePolicy.ALL);
         bot = botBuilder.build().awaitReady();
         running = true;
@@ -72,6 +72,7 @@ public class Satellite implements Runnable{
                 break;
             }
         }
+        System.out.println("Calling ShutdownBot from Satellite class");
         Thread t = new Thread(new ShutdownBot(), "Thread-shutdown");
         t.start();
     }

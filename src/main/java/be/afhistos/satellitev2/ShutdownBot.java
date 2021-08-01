@@ -4,11 +4,10 @@ public class ShutdownBot implements Runnable {
 
     @Override
     public void run() {
-        if(StartHandler.getServer() != null){
-            StartHandler.getVulcainThread().interrupt();
-        }
-        StartHandler.getConsoleThread().interrupt();
+        System.out.println("ShutdownNow JDA");
         Satellite.getBot().shutdownNow();
-        StartHandler.getMainThread().interrupt();
+        System.out.println("Shutdown Threadpool");
+        StartHandler.getThreadPool().shutdown();
+        System.exit(0);
     }
 }
