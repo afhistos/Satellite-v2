@@ -1,7 +1,5 @@
 package be.afhistos.satellitev2;
 
-import java.io.IOException;
-
 public class ShutdownBot implements Runnable {
 
     @Override
@@ -12,6 +10,5 @@ public class ShutdownBot implements Runnable {
         StartHandler.getConsoleThread().interrupt();
         Satellite.getBot().shutdownNow();
         StartHandler.getMainThread().interrupt();
-        System.exit(0);
     }
 }

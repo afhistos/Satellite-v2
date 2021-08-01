@@ -4,8 +4,6 @@ import be.afhistos.satellitev2.consoleUtils.ConsoleThread;
 import be.afhistos.satellitev2.consoleUtils.LogLevel;
 import be.afhistos.satellitev2.server.ServerThread;
 import be.afhistos.satellitev2.server.VulcainServer;
-import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
-import com.sun.security.ntlm.Server;
 import org.java_websocket.server.WebSocketServer;
 
 import javax.security.auth.login.LoginException;
@@ -38,7 +36,7 @@ public class StartHandler {
         BotUtils.log(LogLevel.INFO,"Démarrage des threads nécessaires...", true, true);
         consoleThread = new ConsoleThread();
         consoleThread.start();
-        Satellite satellite = new Satellite(startTime, new EventWaiter());
+        Satellite satellite = new Satellite(startTime);
         mainThread = new Thread(satellite, "Satellite-Thread");
         mainThread.start();
         vulcain = new VulcainServer(44444);
