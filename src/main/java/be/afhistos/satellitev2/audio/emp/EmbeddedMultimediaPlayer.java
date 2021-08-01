@@ -24,7 +24,7 @@ public class EmbeddedMultimediaPlayer extends AudioEventAdapter {
         this.musicManager = musicManager;
         EmbedBuilder builder = new DefaultEmbed(c.getJDA().getSelfUser());
         builder.setDescription("Le lecteur est prêt à l'emploi! Ajoutez une musique avec la commande `²play`.");
-        channel.sendMessage(builder.build()).queue(message -> {
+        channel.sendMessageEmbeds(builder.build()).queue(message -> {
             id = message.getId();
             clearChannel(100);
         });
@@ -36,7 +36,7 @@ public class EmbeddedMultimediaPlayer extends AudioEventAdapter {
         if(updateThread == null){
             EmbedBuilder builder = new EMPDefaultEmbed(t, musicManager, channel);
             channel.retrieveMessageById(id).queue(message -> {
-                message.editMessage(builder.build()).queue();
+                message.editMessageEmbeds(builder.build()).queue();
                 updateThread = new UpdateThread(message,builder, t, musicManager);
                 updateThread.start();
                 message.addReaction("\u25C0").queue();
@@ -100,5 +100,9 @@ public class EmbeddedMultimediaPlayer extends AudioEventAdapter {
 
     public void updateEmbedPlayer(){
         updateThread.setEmbed(new EMPDefaultEmbed(updateThread.getTrack(), musicManager, channel));
+    }
+
+    public void forceRender(){
+        updateThread.forceRender();
     }
 }

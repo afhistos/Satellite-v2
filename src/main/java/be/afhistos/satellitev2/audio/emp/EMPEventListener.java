@@ -75,5 +75,6 @@ public class EMPEventListener extends ListenerAdapter {
                 break;
         }
         AudioUtils.getInstance().getGuildAudioPlayer(g).embeddedPlayer.updateEmbedPlayer();
+        AudioUtils.getInstance().getGuildAudioPlayer(g).embeddedPlayer.forceRender();
     }
 }

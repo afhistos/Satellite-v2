@@ -23,7 +23,7 @@ public class UpdateThread extends Thread {
         songLength = Math.toIntExact(track.getDuration())/1000;//Durée de 'track' en secondes
         songPos = Math.toIntExact(track.getPosition())/1000;
         embed.setDescription(getProgressBar(songPos, songLength));
-        msg.editMessage(embed.build()).queue();
+        msg.editMessageEmbeds(embed.build()).queue();
     }
 
     @Override
@@ -34,7 +34,7 @@ public class UpdateThread extends Thread {
                 String formattedTime = BotUtils.getTimestamp(songPos * 1000, false) + "**/**" +
                         BotUtils.getTimestamp(songLength * 1000, false);
                 embed.setDescription(getProgressBar(songPos, songLength) + " " + formattedTime);
-                message.editMessage(embed.build()).queue();
+                message.editMessageEmbeds(embed.build()).queue();
             }
             try {
                 Thread.sleep(500);
@@ -66,5 +66,9 @@ public class UpdateThread extends Thread {
 
     public void setEmbed(EmbedBuilder embed) {
         this.embed = embed;
+    }
+
+    public void forceRender(){
+        message.editMessageEmbeds(embed.build()).queue();
     }
 }
