@@ -33,10 +33,10 @@ public class CommandWatcher implements CommandListener, ConsoleListener {
         throwable.printStackTrace();
     }
 
-    public void onConsoleMessage() {
+    public void onConsoleMessage(String message) {
 
     }
 
-    public void onConsoleCommand() {
+    public void onConsoleCommand(String command) {
     }
 }
