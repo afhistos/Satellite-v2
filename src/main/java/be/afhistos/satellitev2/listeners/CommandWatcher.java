@@ -1,13 +1,14 @@
 package be.afhistos.satellitev2.listeners;
 
 import be.afhistos.satellitev2.BotUtils;
+import be.afhistos.satellitev2.consoleUtils.ConsoleListener;
 import be.afhistos.satellitev2.consoleUtils.LogLevel;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.CommandListener;
 import net.dv8tion.jda.api.entities.ChannelType;
 
-public class CommandWatcher implements CommandListener {
+public class CommandWatcher implements CommandListener, ConsoleListener {
 
     @Override
     public void onCommand(CommandEvent event, Command command) {
@@ -30,5 +31,12 @@ public class CommandWatcher implements CommandListener {
         event.reply("Une erreur est survenue lors du traitement de la commande :(\n```java\n"+throwable.getClass().getName()+"\n```");
         BotUtils.log(LogLevel.ERROR, s,true, true);
         throwable.printStackTrace();
+    }
+
+    public void onConsoleMessage() {
+
+    }
+
+    public void onConsoleCommand() {
     }
 }
