@@ -25,6 +25,7 @@ public class StartHandler {
 
 
     public static void main(String[] args) throws IOException, LoginException, InterruptedException, SQLException {
+
         startTime = System.currentTimeMillis();
         pool = Executors.newCachedThreadPool();
         props.load(StartHandler.class.getResourceAsStream("/props.properties"));
@@ -44,7 +45,7 @@ public class StartHandler {
         pool.execute(satellite);
         vulcain = new VulcainServer(44444);
         pool.execute(vulcain);
-        BotUtils.log(LogLevel.INFO ,"Serveur Vulcain démarré", true, true);
+        BotUtils.log(LogLevel.INFO ,"Serveur Vulcain démarré à l'adresse "+vulcain.getAddress().getAddress().getHostAddress()+"/"+vulcain.getPort(), true, true);
 
 
 
