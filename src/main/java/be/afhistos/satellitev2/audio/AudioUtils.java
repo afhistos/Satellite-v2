@@ -227,8 +227,9 @@ public class AudioUtils extends ListenerAdapter {
                         i++;
                     }
                 }
-                String msg = "Ajout de "+playlist.getTracks().size()+" morceau(x) à la playlist, comprennant "+artists+
-                        (i>5 ? " et"+(i > 10 ? " plein":"") : " d'autres");
+                int playlistSize  = Math.min(playlist.getTracks().size(), limit);
+                String msg = "Ajout de "+playlistSize+" morceau(x) à la playlist, comprennant "+artists+
+                        (i>5 ? " et d'autres": "");
                 chan.sendMessage(msg).queue();
             }
 
