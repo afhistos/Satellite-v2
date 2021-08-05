@@ -31,7 +31,7 @@ public class CommandPlay extends Command {
         }
         AudioUtils.getInstance().getGuildAudioPlayer(e.getGuild());//Load GuildAudioPlayer before playing
         String query, timecode = "0";
-        int i=20; //Default value
+        int i=1; //Default value
         String first;
         if(e.getArgs().startsWith("http://") || e.getArgs().startsWith("https://")){
             query = e.getArgs();
