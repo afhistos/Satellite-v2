@@ -212,24 +212,35 @@ public class AudioUtils extends ListenerAdapter {
 
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
-                StringBuilder artists = new StringBuilder();
+                String artists = "";
                 String artist;
-                int i = 0;
-                for(AudioTrack t : playlist.getTracks()){
-                    if(i >= limit){
-                        break;
+                String msg;
+                if(limit == 1){
+                    AudioTrack track = playlist.getTracks().get(0);
+                    getGuildAudioPlayer(chan.getGuild()).scheduler.queue(track);
+                    msg = "Ajout de "+track.getInfo().title+" à la file d'attente. Taille de la playlist: "+
+                            (getGuildAudioPlayer(chan.getGuild()).scheduler.getQueue().size() + 1)+ " morceau(x).";
+                }else{
+                    int i = 0;
+                    for(AudioTrack t : playlist.getTracks()){
+                        if(i >= limit){
+                            break;
+                        }
+                        getGuildAudioPlayer(chan.getGuild()).scheduler.queue(t);
+                        artist = t.getInfo().author;
+                        artist = artist.replace(" - Topic", "");
+                        if(!artists.contains(artist) && i <= 5){
+                            artists = artists.concat(artist).concat(", ");
+                            i++;
+                        }
                     }
-                    getGuildAudioPlayer(chan.getGuild()).scheduler.queue(t);
-                    artist = t.getInfo().author;
-                    artist = artist.replace(" - Topic", "");
-                    if(!artists.toString().contains(artist) && i <= 5){
-                        artists.append(artist).append(", ");
-                        i++;
+                    if(artists.endsWith(", ")){
+                        artists = artists.substring(0, artists.length() - 2);
                     }
+                    msg = "Ajout de "+i+" morceau(x) à la playlist, comprennant "+artists+
+                            (i>5 ? " et d'autres": "");
+
                 }
-                int playlistSize  = Math.min(playlist.getTracks().size(), limit);
-                String msg = "Ajout de "+playlistSize+" morceau(x) à la playlist, comprennant "+artists+
-                        (i>5 ? " et d'autres": "");
                 chan.sendMessage(msg).queue();
             }
 
