@@ -5,6 +5,8 @@ import be.afhistos.satellitev2.audio.AudioUtils;
 import be.afhistos.satellitev2.consoleUtils.LogLevel;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 import java.util.concurrent.TimeUnit;
@@ -21,6 +23,7 @@ public class CommandPlay extends Command {
 
     @Override
     protected void execute(CommandEvent e) {
+        //Connect to audio
         AudioManager audio = e.getGuild().getAudioManager();
         if(!audio.isConnected()){
             if(e.getMember().getVoiceState().inVoiceChannel()){
@@ -29,7 +32,31 @@ public class CommandPlay extends Command {
                 AudioUtils.getInstance().connectToFirstVoiceChannel(audio);
             }
         }
+
         AudioUtils.getInstance().getGuildAudioPlayer(e.getGuild());//Load GuildAudioPlayer before playing
+
+        //Handle args
+        boolean insertFirst = false, forceJoin = false, clear = false;
+        SearchType searchType = SearchType.UNKNOWN;
+        String[] splittedArgs = e.getArgs().split("\\s+");
+        String temp;
+        for (String split : splittedArgs){
+            if(split.startsWith("--")){
+                temp = split.substring(2);
+                insertFirst = temp.equalsIgnoreCase("i");
+                forceJoin = temp.equalsIgnoreCase("fc");
+                clear = temp.equalsIgnoreCase("c");
+            }else if(split.startsWith("-")){
+                temp = split.substring(1);
+                insertFirst = insertFirst || temp.equalsIgnoreCase("insert");
+                forceJoin = forceJoin || temp.equalsIgnoreCase("forcejoin");
+                clear = clear || temp.equalsIgnoreCase("clear");
+                if(searchType == SearchType.UNKNOWN){
+                    searchType = SearchType.fromKey(temp);
+                }
+            }
+        }
+
         String query, timecode = "0";
         int i=1; //Default value
         String first;
@@ -46,12 +73,51 @@ public class CommandPlay extends Command {
                 i = Integer.parseInt(first);
                 query = query.replace(first, "");
             }
-            query = "ytsearch:"+ query;
+            query = searchType.getSearchPrefix()+ query;
         }
-        boolean addFirst = e.getArgs().contains("-insert") || e.getArgs().contains("--i");
-        BotUtils.log(LogLevel.WARNING, "addFirst: "+addFirst + "\ntimecode: "+timecode, false, false);
-        long pos = TimeUnit.SECONDS.toMillis(Long.parseLong(timecode));
-        AudioUtils.getInstance().loadAndPlay(e.getTextChannel(),  query, i, addFirst, pos);
+        if(forceJoin && BotUtils.isOwner(e.getMember())){
+            if(e.getMember().getVoiceState().inVoiceChannel()){
+                e.getSelfMember().getGuild().getAudioManager().openAudioConnection(e.getMember().getVoiceState().getChannel());
+            }
+        }
 
+        long pos = TimeUnit.SECONDS.toMillis(Long.parseLong(timecode));
+        AudioUtils.getInstance().loadAndPlay(e.getTextChannel(),  query, i, insertFirst, clear, pos);
+
+
+    }
+
+    public enum SearchType{
+        YOUTUBE("yt"),
+        YOUTUBE_MUSIC("ytm"),
+        SOUNDCLOUD("sc"),
+        UNKNOWN("unknown");
+
+        private final String key;
+
+        SearchType(String key) {
+            this.key = key;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getSearchPrefix(){
+            return key+"search:";
+        }
+
+        public static SearchType fromKey(String key){
+            SearchType[] listOf = values();
+            int length = listOf.length;
+            for (int i = 0; i < length; i++) {
+                SearchType toValidate = listOf[i];
+                if(toValidate.key.equalsIgnoreCase(key)){
+                    return toValidate;
+                }
+
+            }
+            return UNKNOWN;
+        }
     }
 }
