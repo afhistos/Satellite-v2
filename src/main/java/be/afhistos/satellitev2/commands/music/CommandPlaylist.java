@@ -36,8 +36,6 @@ public class CommandPlaylist extends Command {
 
     @Override
     protected void execute(CommandEvent e) {
-        e.reply(AudioUtils.getInstance().getPlaylistString(e.getGuild()));
-
         if(!e.getArgs().isEmpty() && e.getArgs().equalsIgnoreCase("tiny")){
             e.reply(AudioUtils.getInstance().getPlaylistString(e.getGuild()));
             return;
