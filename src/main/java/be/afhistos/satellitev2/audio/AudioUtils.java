@@ -26,6 +26,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -201,10 +202,14 @@ public class AudioUtils extends ListenerAdapter {
      * @param trackUrl the trackUrl (if start with 'ytsearch:', it is a youtube search)
      * @param limit if it is a youtube search, the number of track loaded
      * @param addFirst set to true to add song on top of queue
+     * @param clearPlaylist set to true to clear playlist before adding requested song(s)
      * @param pos play the track at saved pos (only if queue is empty)
      */
-    public void loadAndPlay(final TextChannel chan, final String trackUrl, int limit, boolean addFirst, long pos){
+    public void loadAndPlay(final TextChannel chan, final String trackUrl, int limit, boolean addFirst, boolean clearPlaylist, long pos){
         GuildMusicManager musicManager = getGuildAudioPlayer(chan.getGuild());
+        if(clearPlaylist){
+            musicManager.scheduler.clearQueue();
+        }
         playerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
@@ -226,17 +231,23 @@ public class AudioUtils extends ListenerAdapter {
                             (getGuildAudioPlayer(chan.getGuild()).scheduler.getQueue().size() + 1)+ " morceau(x).";
                 }else{
                     int i = 0;
+                    ArrayList<AudioTrack> tracks = new ArrayList<>();
                     for(AudioTrack t : playlist.getTracks()){
                         if(i >= limit){
                             break;
                         }
-                        getGuildAudioPlayer(chan.getGuild()).scheduler.queue(t);
+                        tracks.add(t);
                         artist = t.getInfo().author;
                         artist = artist.replace(" - Topic", "");
                         if(!artists.contains(artist) && i <= 5){
                             artists = artists.concat(artist).concat(", ");
                             i++;
                         }
+                    }
+                    if(addFirst){
+                        musicManager.scheduler.getQueue().addAll(0, tracks);
+                    }else{
+                        musicManager.scheduler.getQueue().addAll(tracks);
                     }
                     if(artists.endsWith(", ")){
                         artists = artists.substring(0, artists.length() - 2);
