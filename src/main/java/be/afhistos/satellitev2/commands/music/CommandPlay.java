@@ -40,6 +40,7 @@ public class CommandPlay extends Command {
         SearchType searchType = SearchType.YOUTUBE;
         String[] splittedArgs = e.getArgs().split("\\s+");
         String temp;
+        StringBuilder query = new StringBuilder();
         for (String split : splittedArgs){
             if(split.startsWith("--")){
                 temp = split.substring(2);
@@ -54,26 +55,25 @@ public class CommandPlay extends Command {
                 if(searchType == SearchType.UNKNOWN){
                     searchType = SearchType.fromKey(temp);
                 }
+            }else{
+                query.append(split);
             }
         }
 
-        String query, timecode = "0";
+        String timecode = "0";
         int i=1; //Default value
         String first;
         if(e.getArgs().startsWith("http://") || e.getArgs().startsWith("https://")){
-            query = e.getArgs();
-            if(query.contains("&t=")){
-                timecode = query.split("&t=")[1];
+            if(query.toString().contains("&t=")){
+                timecode = query.toString().split("&t=")[1];
                 timecode = timecode.replaceAll("[^0-9]", "");
             }
         }else{
-            query = e.getArgs();
-            first = query.split("\\s")[0];
+            first = query.toString().split("\\s")[0];
             if(first.matches("[0-9]")){
                 i = Integer.parseInt(first);
-                query = query.replace(first, "");
             }
-            query = searchType.getSearchPrefix()+ query;
+            query.insert(0, searchType.getSearchPrefix());
         }
         if(forceJoin && BotUtils.isOwner(e.getMember())){
             if(e.getMember().getVoiceState().inVoiceChannel()){
@@ -82,7 +82,7 @@ public class CommandPlay extends Command {
         }
 
         long pos = TimeUnit.SECONDS.toMillis(Long.parseLong(timecode));
-        AudioUtils.getInstance().loadAndPlay(e.getTextChannel(),  query, i, insertFirst, clear, pos);
+        AudioUtils.getInstance().loadAndPlay(e.getTextChannel(), query.toString(), i, insertFirst, clear, pos);
 
 
     }
