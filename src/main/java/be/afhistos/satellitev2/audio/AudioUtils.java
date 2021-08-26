@@ -221,10 +221,11 @@ public class AudioUtils extends ListenerAdapter {
 
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
+
                 String artists = "";
                 String artist;
                 String msg;
-                if(limit == 1){
+                if(limit == 1 && playlist.isSearchResult()){
                     AudioTrack track = playlist.getTracks().get(0);
                     getGuildAudioPlayer(chan.getGuild()).scheduler.queue(track);
                     msg = "Ajout de "+track.getInfo().title+" à la file d'attente. Taille de la playlist: "+
@@ -233,7 +234,7 @@ public class AudioUtils extends ListenerAdapter {
                     int i = 0;
                     ArrayList<AudioTrack> tracks = new ArrayList<>();
                     for(AudioTrack t : playlist.getTracks()){
-                        if(i >= limit){
+                        if(i >= limit && playlist.isSearchResult()){
                             break;
                         }
                         tracks.add(t);
