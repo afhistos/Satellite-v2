@@ -3,6 +3,7 @@ package be.afhistos.satellitev2;
 import be.afhistos.satellitev2.consoleUtils.LogLevel;
 import be.afhistos.satellitev2.consoleUtils.TextColor;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
 import org.java_websocket.WebSocket;
 
 import javax.management.Attribute;
@@ -15,6 +16,7 @@ import java.lang.management.ManagementFactory;
 import java.net.*;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.TimeZone;
@@ -133,5 +135,13 @@ public class BotUtils {
         } else {
             return "[Ce socket n'utilise pas un protocole internet]";
         }
+    }
+
+    public static boolean isOwner(String id){
+        return Satellite.getClient().getOwnerId().equals(id) || Arrays.asList(Satellite.getClient().getCoOwnerIds()).contains(id);
+    }
+
+    public static boolean isOwner(Member member){
+        return isOwner(member.getId());
     }
 }
