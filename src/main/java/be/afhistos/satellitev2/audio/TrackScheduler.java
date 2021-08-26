@@ -5,16 +5,13 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class TrackScheduler extends AudioEventAdapter {
     private boolean repeatingOnce = false;
     private boolean repeatingPlaylist = false;
     private final AudioPlayer player;
-    private final Queue<AudioTrack> queue;
+    private final Deque<AudioTrack> queue;
     AudioTrack lastTrack;
 
     public TrackScheduler(AudioPlayer player){
@@ -26,6 +23,10 @@ public class TrackScheduler extends AudioEventAdapter {
         if(!player.startTrack(track, true)){
             queue.offer(track);
         }
+    }
+
+    public void queueFirst(AudioTrack track){
+        queue.offerFirst(track);
     }
 
     public LinkedList<AudioTrack> getQueue() {
