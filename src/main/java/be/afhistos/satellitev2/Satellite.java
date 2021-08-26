@@ -37,7 +37,7 @@ public class Satellite implements Runnable{
         BotUtils.CAT_PERMISSIONS_DENY.add(Permission.VIEW_CHANNEL);
         waiter = new EventWaiter();
         builder.setPrefix("²");
-        builder.addCommands(new CommandMonitoring(), new CommandStopBot(), new CommandConfinement(), new CommandEval());
+        builder.addCommands(new CommandMonitoring(), new CommandStopBot(), new CommandConfinement());
         builder.addCommands(new CommandBassBoost(), new CommandPlay(),new CommandVolume(),new CommandNowPlaying(),
                 new CommandPlaylist(waiter), new CommandStopMusic(), new CommandSkip(), new CommandShuffle(),
                 new CommandLoop(), new CommandJump(), new CommandPause(),new CommandClearPlaylist(),
