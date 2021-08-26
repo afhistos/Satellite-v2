@@ -37,7 +37,7 @@ public class CommandPlay extends Command {
 
         //Handle args
         boolean insertFirst = false, forceJoin = false, clear = false;
-        SearchType searchType = SearchType.UNKNOWN;
+        SearchType searchType = SearchType.YOUTUBE;
         String[] splittedArgs = e.getArgs().split("\\s+");
         String temp;
         for (String split : splittedArgs){
