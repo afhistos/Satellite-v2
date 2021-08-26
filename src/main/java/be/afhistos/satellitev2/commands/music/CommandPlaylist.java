@@ -1,11 +1,15 @@
 package be.afhistos.satellitev2.commands.music;
 
+import be.afhistos.satellitev2.BotUtils;
 import be.afhistos.satellitev2.audio.AudioUtils;
+import be.afhistos.satellitev2.audio.GuildMusicManager;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jagrosh.jdautilities.menu.Paginator;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
+import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
 public class CommandPlaylist extends Command {
@@ -33,7 +37,7 @@ public class CommandPlaylist extends Command {
     @Override
     protected void execute(CommandEvent e) {
         e.reply(AudioUtils.getInstance().getPlaylistString(e.getGuild()));
-        /*
+
         if(!e.getArgs().isEmpty() && e.getArgs().equalsIgnoreCase("tiny")){
             e.reply(AudioUtils.getInstance().getPlaylistString(e.getGuild()));
             return;
@@ -43,7 +47,7 @@ public class CommandPlaylist extends Command {
             try{
                 page = Integer.parseInt(e.getArgs());
             }catch (NumberFormatException ex) {
-                e.reply(e.getHandler().getError() + "`" + e.getArgs() + "` n'est pas un nombre valide!");
+                e.reply(e.getClient().getError() + "`" + e.getArgs() + "` n'est pas un nombre valide!");
                 return;
             }
         }
@@ -68,6 +72,5 @@ public class CommandPlaylist extends Command {
                 .setUsers(e.getAuthor()).build();
         p.paginate(e.getChannel(), page);
 
-         */
     }
 }
