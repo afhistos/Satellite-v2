@@ -238,7 +238,6 @@ public class AudioUtils extends ListenerAdapter {
                             break;
                         }
                         tracks.add(t);
-                        System.out.println("Adding "+t.getInfo().title+" to tracks. New Size: "+tracks.size());
                         artist = t.getInfo().author;
                         artist = artist.replace(" - Topic", "");
                         if(!artists.contains(artist) && i <= 5){
@@ -247,13 +246,11 @@ public class AudioUtils extends ListenerAdapter {
                         }
                     }
                     if(addFirst){
-                        System.out.println("Adding first");
                         //We need to go backward or the playlist will be inverted
                         for (int j = tracks.size()- 1; j >= 0 ; j--) {
                             musicManager.scheduler.queueFirst(tracks.get(j));
                         }
                     }else{
-                        System.out.println("Adding last");
                         for (AudioTrack track : tracks){
                             musicManager.scheduler.queue(track);
                         }
