@@ -34,7 +34,9 @@ public class UpdateThread extends Thread {
                 String formattedTime = BotUtils.getTimestamp(songPos * 1000, false) + "**/**" +
                         BotUtils.getTimestamp(songLength * 1000, false);
                 embed.setDescription(getProgressBar(songPos, songLength) + " " + formattedTime);
-                message.editMessageEmbeds(embed.build()).queue();
+                message.editMessageEmbeds(embed.build()).queue(msg ->{}, throwable -> {
+
+                });
             }
             try {
                 Thread.sleep(500);
