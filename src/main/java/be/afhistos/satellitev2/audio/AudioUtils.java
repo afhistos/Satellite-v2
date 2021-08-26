@@ -258,8 +258,8 @@ public class AudioUtils extends ListenerAdapter {
                     if(artists.endsWith(", ")){
                         artists = artists.substring(0, artists.length() - 2);
                     }
-                    msg = "Ajout de "+i+" morceau(x) à la playlist, comprennant "+artists+
-                            (i>5 ? " et d'autres": "");
+                    msg = "Ajout de "+tracks.size()+" morceau(x) à la playlist, comprennant "+artists+
+                            (i>5 ? " et d'autres": " et c'est tout");
 
                 }
                 chan.sendMessage(msg).queue();
