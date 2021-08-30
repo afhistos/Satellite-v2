@@ -24,6 +24,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.managers.AudioManager;
+import net.dv8tion.jda.internal.utils.Checks;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -378,7 +379,7 @@ public class AudioUtils extends ListenerAdapter {
     public TextChannel retrieveEMP(Guild g){
         TextChannel channel = null;
         for(TextChannel c : g.getTextChannelsByName("sate-lecteur", false)){
-            if(c.getTopic().startsWith("emp-channel-"+g.getId())){
+            if(c.getTopic() != null && c.getTopic().startsWith("emp-channel-"+g.getId())){
                 channel = c;
                 break;
             }
