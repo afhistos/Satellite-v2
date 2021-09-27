@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: net.dv8tion:JDA:4.3.0_301">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.m2/repository/net/dv8tion/JDA/4.3.0_301/JDA-4.3.0_301.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.m2/repository/net/dv8tion/JDA/4.3.0_301/JDA-4.3.0_301-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.m2/repository/net/dv8tion/JDA/4.3.0_301/JDA-4.3.0_301-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
