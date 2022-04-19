@@ -84,9 +84,6 @@ public class JSONHandler {
         channelArray.put("Count", guild.getChannels().size());
         channelArray.put("CatCount", guild.getCategories().size());
         channelArray.put("TextCount",guild.getTextChannels().size());
-        channelArray.put("Count",guild.getV);
-        channelArray.put("Count",);
-        channelArray.put("Count",);
         channelArray.put("booster", new JSONArray(guild.getBoosters().stream().map(Member::getEffectiveName).collect(Collectors.toList())));
 
         toReturn.put("members", memberArray);
@@ -158,7 +155,7 @@ public class JSONHandler {
         JSONObject item;
         for (Guild g : Satellite.getBot().getGuilds()) {
             item = new JSONObject();
-            item.put("name", g.getName()).put("id", g.getId()).put("owner", g.getOwner().getEffectiveName());
+            item.put("name", g.getName()).put("id", g.getId()).put("owner", g.getOwner().getUser().getName());
             array.put(item);
         }
         toReturn.put("data",array);

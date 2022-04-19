@@ -7,6 +7,7 @@ import be.afhistos.satellitev2.commands.music.*;
 import be.afhistos.satellitev2.consoleUtils.LogLevel;
 import be.afhistos.satellitev2.consoleUtils.TextColor;
 import be.afhistos.satellitev2.listeners.CommandWatcher;
+import be.afhistos.satellitev2.sql.SQLUtils;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
@@ -32,14 +33,16 @@ public class Satellite implements Runnable{
     private static EventWaiter waiter;
     private static CommandClientBuilder builder = new CommandClientBuilder();
     private static CommandClient client;
+    private SQLUtils utils;
     private long loadedTime;
 
     public Satellite(long st) throws LoginException, InterruptedException, SQLException {
         BotUtils.CAT_PERMISSIONS_DENY =  new LinkedList<>();
         BotUtils.CAT_PERMISSIONS_DENY.add(Permission.VIEW_CHANNEL);
+        utils = new SQLUtils(true);
         waiter = new EventWaiter();
         builder.setPrefix("²");
-        builder.addCommands(new CommandMonitoring(), new CommandStopBot(), new CommandConfinement());
+        builder.addCommands(new CommandMonitoring(), new CommandStopBot(), new CommandConfinement(), new CommandVulcain(utils));
         builder.addCommands(new CommandBassBoost(), new CommandPlay(),new CommandVolume(),new CommandNowPlaying(),
                 new CommandPlaylist(waiter), new CommandStopMusic(), new CommandSkip(), new CommandShuffle(),
                 new CommandLoop(), new CommandJump(), new CommandPause(),new CommandClearPlaylist(),
