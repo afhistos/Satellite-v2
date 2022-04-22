@@ -2,14 +2,10 @@ package be.afhistos.satellitev2.server;
 
 
 import be.afhistos.satellitev2.BotUtils;
-import be.afhistos.satellitev2.Satellite;
 import be.afhistos.satellitev2.consoleUtils.LogLevel;
-import net.dv8tion.jda.api.entities.Guild;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
-import org.json.JSONArray;
-import org.json.JSONML;
 import org.json.JSONObject;
 
 import java.net.InetSocketAddress;
