@@ -1,6 +1,8 @@
 package be.afhistos.satellitev2.server;
 
 import be.afhistos.satellitev2.Satellite;
+import be.afhistos.satellitev2.sql.QueryResult;
+import be.afhistos.satellitev2.sql.SQLUtils;
 import com.sun.security.auth.callback.TextCallbackHandler;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.Permission;
@@ -15,14 +17,19 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public class JSONHandler {
+    private static SQLUtils utils = Satellite.getUtils();
 
     public static String handle(JSONObject json){
-        String action = json.getString("action");
+        String authToken = json.getString("auth_token");
         String guild = json.getString("guild");
+        String action = json.getString("action");
+        if(!isAllowed(authToken, guild)){return null;}
+
         JSONObject result;
         switch (action){
             case "getStats":
@@ -37,6 +44,16 @@ public class JSONHandler {
 
         return result != null ? result.toString() : null;
 
+    }
+
+    private static boolean isAllowed(String token, String guildId){
+        QueryResult qr = utils.getData("SELECT id, is_admin FROM auth WHERE token = '?'", token);
+        String authId = qr.getValue(0,0);
+        if(Objects.equals(qr.getValue(0, 1), "1")){
+            return true;
+        }
+        qr = utils.getData("SELECT server_id FROM link WHERE auth_id = ?", authId);
+        return qr.getColumn(0).contains(guildId);
     }
 
     public static JSONObject isJsonValid(String json){
