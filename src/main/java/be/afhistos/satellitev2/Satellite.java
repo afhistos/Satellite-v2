@@ -33,7 +33,7 @@ public class Satellite implements Runnable{
     private static EventWaiter waiter;
     private static CommandClientBuilder builder = new CommandClientBuilder();
     private static CommandClient client;
-    private SQLUtils utils;
+    private static SQLUtils utils;
     private long loadedTime;
 
     public Satellite(long st) throws LoginException, InterruptedException, SQLException {
@@ -102,5 +102,7 @@ public class Satellite implements Runnable{
         return waiter;
     }
 
-
+    public static SQLUtils getUtils() {
+        return utils;
+    }
 }
