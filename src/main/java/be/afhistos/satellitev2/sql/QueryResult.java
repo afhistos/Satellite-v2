@@ -87,6 +87,17 @@ public class QueryResult {
         throw new IllegalArgumentException("Le résultat ne contient aucune colonne nommée '"+name+"'!");
     }
 
+    public List<String> getColumn(int column){
+        if(column < 0 || column > colsCount){
+            throw new IndexOutOfBoundsException("La colonne "+ column+ " est en dehors des limites du résultat (0 - "+colsCount+")!");
+        }
+        List<String> col = new ArrayList<>();
+        result.forEach(rows -> {
+            col.add(rows[column]);
+        });
+        return col;
+    }
+
     public ResultSet getResult() {
         return r;
     }
