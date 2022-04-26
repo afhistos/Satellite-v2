@@ -42,7 +42,7 @@ public class Satellite implements Runnable{
         utils = new SQLUtils(true);
         waiter = new EventWaiter();
         builder.setPrefix("²");
-        builder.addCommands(new CommandMonitoring(), new CommandStopBot(), new CommandConfinement(), new CommandVulcain(utils));
+        builder.addCommands(new CommandMonitoring(), new CommandStopBot(), new CommandConfinement(), new CommandVulcain(utils), new CommandGetLogs());
         builder.addCommands(new CommandBassBoost(), new CommandPlay(),new CommandVolume(),new CommandNowPlaying(),
                 new CommandPlaylist(waiter), new CommandStopMusic(), new CommandSkip(), new CommandShuffle(),
                 new CommandLoop(), new CommandJump(), new CommandPause(),new CommandClearPlaylist(),
