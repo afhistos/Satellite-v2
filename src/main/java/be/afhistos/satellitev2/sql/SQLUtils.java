@@ -11,8 +11,6 @@ public class SQLUtils {
 
     private boolean autoClose;
 
-
-
     public SQLUtils(boolean autoClose){
         this.autoClose = autoClose;
         try {
@@ -50,18 +48,21 @@ public class SQLUtils {
         this.autoClose = autoClose;
     }
 
-    public void execute(String query){
+    public int execute(String query){
         getInstance();
         Statement s = null;
+        int id;
         try {
             s = c.createStatement();
             if(s == null){
                 throw new IllegalArgumentException("s is null silly");
             }
-            s.execute(query);
+            id = s.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+            return -1;
         }
+        return id;
 
     }
 
@@ -99,7 +100,6 @@ public class SQLUtils {
         return new QueryResult(s,r, this.autoClose);
     }
 
-    //Ne pas s'en servir maintenant
     public QueryResult getData(String query, Object... args){
         getInstance();
         PreparedStatement s =null;
