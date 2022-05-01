@@ -11,15 +11,14 @@ import javax.management.AttributeList;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.awt.*;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.net.*;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.TimeZone;
+import java.util.*;
 
 public class BotUtils {
     public static String WHITE_CHECK_MARK = "\\u2705";
@@ -143,5 +142,29 @@ public class BotUtils {
 
     public static boolean isOwner(Member member){
         return isOwner(member.getId());
+    }
+
+    public static String httpGet(String urlString, boolean authorizeNonJsonResponse, boolean formatResponse) throws IOException {
+        StringBuilder output = new StringBuilder();
+        URL url = new URL(urlString);
+        URLConnection uc = url.openConnection();
+        String contentType = uc.getHeaderField("Content-Type");
+        if(!Objects.equals(contentType, "application/json") || !contentType.equals("application/xml")){
+            if(!authorizeNonJsonResponse){
+                return "ErrNonAuthorized";
+            }
+        }
+        output.append("# Response content type: " + contentType + " #\n");
+        BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream()));
+        String inputLine;
+        while((inputLine = in.readLine()) != null){
+           output.append(inputLine).append("\n");
+        }
+        in.close();
+        if(output.length() < 1985 && formatResponse){
+            output.append("\n```");
+            output.insert(0, "```" + contentType.split("/")[1] + "\n");
+        }
+        return output.toString();
     }
 }
