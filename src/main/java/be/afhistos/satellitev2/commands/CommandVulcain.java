@@ -1,5 +1,6 @@
 package be.afhistos.satellitev2.commands;
 
+import be.afhistos.satellitev2.BotUtils;
 import be.afhistos.satellitev2.sql.QueryResult;
 import be.afhistos.satellitev2.sql.SQLUtils;
 import com.jagrosh.jdautilities.command.Command;
@@ -28,7 +29,7 @@ public class CommandVulcain extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        if(!event.getGuild().getOwnerId().equals(event.getAuthor().getId())){
+        if(!BotUtils.isOwner(event.getMember())){
             event.replyInDm(":warning: Seuls les propriétaires de serveurs peuvent utiliser cette commande.");
             return;
         }
@@ -47,7 +48,7 @@ public class CommandVulcain extends Command {
                 utils.execute("INSERT INTO auth (user_id, token, is_admin) VALUES (?, ?, ?)",
                         event.getAuthor().getId(),
                         uuid.toString(),
-                        isOwner(event.getAuthor().getId(), event.getClient()));
+                        BotUtils.isOwner(event.getAuthor().getId()));
                 event.getAuthor().openPrivateChannel().flatMap(channel ->
                     channel.sendMessage("**Token**: "+ uuid +"\nCe message sera supprimé <t:"+ (Instant.now().getEpochSecond()+ 600)+":R>"))
                             .delay(Duration.ofMinutes(10))
@@ -105,10 +106,5 @@ public class CommandVulcain extends Command {
         }
     }
 
-    private int isOwner(String id, CommandClient client){
-        ArrayList<String> ids = new ArrayList<String>();
-        ids.add(client.getOwnerId());
-        ids.addAll(List.of(client.getCoOwnerIds()));
-        return (ids.contains(id) ? 1 : 0);
-    }
+
 }
