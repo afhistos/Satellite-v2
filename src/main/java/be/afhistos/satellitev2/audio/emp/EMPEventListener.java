@@ -4,8 +4,7 @@ import be.afhistos.satellitev2.audio.AudioUtils;
 import be.afhistos.satellitev2.audio.GuildMusicManager;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import javax.annotation.Nonnull;
@@ -13,13 +12,20 @@ import javax.annotation.Nonnull;
 public class EMPEventListener extends ListenerAdapter {
 
     @Override
-    public void onGuildMessageReactionAdd(@Nonnull GuildMessageReactionAddEvent event) {
-        if(!(event.getJDA().getSelfUser() == event.getUser()) && event.getChannel().getName().equals("sate-lecteur")){
+    public void onMessageReactionAdd(@Nonnull MessageReactionAddEvent event) {
+        if(!event.isFromGuild()){
+            return;
+        }
+        if(event.getJDA().getSelfUser() == event.getUser()){
+            return;
+        }
+
+        if(event.getChannel().getName().equals("sate-lecteur")){
             event.getChannel().retrieveMessageById(event.getMessageId()).queue(message -> {
                 if(message.getId().equals(AudioUtils.getInstance().getGuildAudioPlayer(event.getGuild())
                 .embeddedPlayer.getId())){
                     if(message.getAuthor() == event.getJDA().getSelfUser()){
-                        processReaction(event.getReactionEmote().getAsCodepoints().toUpperCase(), event.getGuild());
+                        processReaction(event.getEmoji().asUnicode().getAsCodepoints().toUpperCase(), event.getGuild());
                         event.getReaction().removeReaction(event.getUser()).queue();
                     }
 

@@ -9,6 +9,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -26,6 +27,7 @@ public class EmbeddedMultimediaPlayer extends AudioEventAdapter {
         builder.setDescription("Le lecteur est prêt à l'emploi! Ajoutez une musique avec la commande `²play`.");
         channel.sendMessageEmbeds(builder.build()).queue(message -> {
             id = message.getId();
+            System.out.println("ID: "+ id);
             clearChannel(100);
         });
 
@@ -39,16 +41,16 @@ public class EmbeddedMultimediaPlayer extends AudioEventAdapter {
                 message.editMessageEmbeds(builder.build()).queue();
                 updateThread = new UpdateThread(message,builder, t, musicManager);
                 updateThread.start();
-                message.addReaction("\u25C0").queue();
-                message.addReaction("\u25B6").queue();
-                message.addReaction("\uD83D\uDD3C").queue();
-                message.addReaction("\uD83D\uDD3D").queue();
-                message.addReaction("\uD83D\uDD00").queue();
-                message.addReaction("\u23E9").queue();
-                message.addReaction("\u23EF").queue();
-                message.addReaction("\u21A9").queue();
-                message.addReaction("\uD83D\uDD04").queue();
-                message.addReaction("\uD83D\uDD0A").queue();
+                message.addReaction(Emoji.fromUnicode("\u25C0")).queue();
+                message.addReaction(Emoji.fromUnicode("\u25B6")).queue();
+                message.addReaction(Emoji.fromUnicode("\uD83D\uDD3C")).queue();
+                message.addReaction(Emoji.fromUnicode("\uD83D\uDD3D")).queue();
+                message.addReaction(Emoji.fromUnicode("\uD83D\uDD00")).queue();
+                message.addReaction(Emoji.fromUnicode("\u23E9")).queue();
+                message.addReaction(Emoji.fromUnicode("\u23EF")).queue();
+                message.addReaction(Emoji.fromUnicode("\u21A9")).queue();
+                message.addReaction(Emoji.fromUnicode("\uD83D\uDD04")).queue();
+                message.addReaction(Emoji.fromUnicode("\uD83D\uDD0A")).queue();
             });
         }else{
             updateThread.setTrack(t);
@@ -63,7 +65,7 @@ public class EmbeddedMultimediaPlayer extends AudioEventAdapter {
         builder.setDescription("de la prochaine musique");
         builder.setThumbnail("http://afhistos.be/misc/googleSpinx64.gif");
         channel.retrieveMessageById(id).queue(message -> {
-            message.editMessage(builder.build()).queue();
+            message.editMessageEmbeds(builder.build()).queue();
         });
     }
 

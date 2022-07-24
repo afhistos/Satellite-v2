@@ -20,23 +20,29 @@ public class UpdateThread extends Thread {
         this.embed = embed;
         this.track = t;
         this.musicManager = musicManager;
-        songLength = Math.toIntExact(track.getDuration())/1000;//Durée de 'track' en secondes
-        songPos = Math.toIntExact(track.getPosition())/1000;
-        embed.setDescription(getProgressBar(songPos, songLength));
+        if(!t.getInfo().isStream){
+            songPos = Math.toIntExact(track.getPosition())/1000;
+            songLength = Math.toIntExact(track.getDuration())/1000;//Durée de 'track' en secondes
+            embed.setDescription(getProgressBar(songPos, songLength));
+        }else{
+            embed.setDescription("C'est un stream");
+        }
         msg.editMessageEmbeds(embed.build()).queue();
     }
 
     @Override
     public void run() {
         while(true) {
-            songPos = Math.toIntExact(track.getPosition()) / 1000;
-            if(songPos %5 == 0){//Régule les mises à jours envoyées à discord
-                String formattedTime = BotUtils.getTimestamp(songPos * 1000, false) + "**/**" +
-                        BotUtils.getTimestamp(songLength * 1000, false);
-                embed.setDescription(getProgressBar(songPos, songLength) + " " + formattedTime);
-                message.editMessageEmbeds(embed.build()).queue(msg ->{}, throwable -> {
+            if(!track.getInfo().isStream){
+                songPos = Math.toIntExact(track.getPosition()) / 1000;
+                if(songPos %5 == 0){//Régule les mises à jours envoyées à discord
+                    String formattedTime = BotUtils.getTimestamp(songPos * 1000, false) + "**/**" +
+                            BotUtils.getTimestamp(songLength * 1000, false);
+                    embed.setDescription(getProgressBar(songPos, songLength) + " " + formattedTime);
+                    message.editMessageEmbeds(embed.build()).queue(msg ->{}, throwable -> {
 
                 });
+            }
             }
             try {
                 Thread.sleep(500);
@@ -59,7 +65,7 @@ public class UpdateThread extends Thread {
         this.track = track;
         embed.setThumbnail("https://img.youtube.com/vi/"+track.getIdentifier()+"/maxresdefault.jpg")
                 .setTitle(track.getInfo().title, track.getInfo().uri);
-        message.editMessage(embed.build()).queue();
+        message.editMessageEmbeds(embed.build()).queue();
     }
 
     public AudioTrack getTrack() {

@@ -32,6 +32,10 @@ public class JSONHandler {
 
         JSONObject result;
         switch (action){
+            case "setToken":
+                result = null;
+                //result = setToken()
+                break;
             case "getStats":
                 result = stats(guild);
                 break;

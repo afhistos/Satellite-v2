@@ -41,7 +41,7 @@ public class Satellite implements Runnable{
         BotUtils.CAT_PERMISSIONS_DENY.add(Permission.VIEW_CHANNEL);
         utils = new SQLUtils(true);
         waiter = new EventWaiter();
-        builder.setPrefix("²");
+        builder.setPrefix("&");
         builder.addCommands(new CommandMonitoring(), new CommandStopBot(), new CommandConfinement(), new CommandVulcain(utils),
                 new CommandGetLogs(), new CommandFetchApi());
         builder.addCommands(new CommandBassBoost(), new CommandPlay(),new CommandVolume(),new CommandNowPlaying(),
@@ -54,7 +54,8 @@ public class Satellite implements Runnable{
         client = builder.build();
         JDABuilder botBuilder = JDABuilder.createLight(StartHandler.getProperties().getProperty("token"));
         EnumSet<GatewayIntent> intents = EnumSet.of(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES
-                , GatewayIntent.GUILD_MESSAGE_TYPING, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_VOICE_STATES);
+                , GatewayIntent.GUILD_MESSAGE_TYPING, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_VOICE_STATES
+                , GatewayIntent.MESSAGE_CONTENT);
         EnumSet<CacheFlag> flags = EnumSet.of(CacheFlag.CLIENT_STATUS, CacheFlag.VOICE_STATE);
         botBuilder.enableCache(flags);
         botBuilder.enableIntents(intents);

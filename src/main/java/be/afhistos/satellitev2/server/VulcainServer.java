@@ -3,6 +3,7 @@ package be.afhistos.satellitev2.server;
 
 import be.afhistos.satellitev2.BotUtils;
 import be.afhistos.satellitev2.consoleUtils.LogLevel;
+import org.apache.http.pool.PoolEntry;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
@@ -11,21 +12,24 @@ import org.json.JSONObject;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class VulcainServer extends WebSocketServer implements Runnable {
     private InetSocketAddress address;
-    private JSONObject firstJson;
+    private ArrayList<VulcainConnection> connectionPool;
 
     public VulcainServer(int port) throws UnknownHostException {
         super(new InetSocketAddress(port));
         this.address = super.getAddress();
-       firstJson = JSONHandler.guildList();
+        connectionPool = new ArrayList<VulcainConnection>();
     }
 
     @Override
     public void onOpen(WebSocket webSocket, ClientHandshake clientHandshake) {
-        webSocket.send(firstJson.toString());
+        //Récupérer le token unique depuis l'app
+        //connectionPool.add(new VulcainConnection());
         BotUtils.log(LogLevel.INFO, "Nouvelle connexion depuis: "+webSocket.getRemoteSocketAddress(), true, true);
     }
 

@@ -26,7 +26,7 @@ public class CommandPlay extends Command {
         //Connect to audio
         AudioManager audio = e.getGuild().getAudioManager();
         if(!audio.isConnected()){
-            if(e.getMember().getVoiceState().inVoiceChannel()){
+            if(e.getMember().getVoiceState().inAudioChannel()){
                 AudioUtils.getInstance().connectToVoiceChannel(audio, e.getMember().getVoiceState().getChannel(), true);
             }else{
                 AudioUtils.getInstance().connectToFirstVoiceChannel(audio);
@@ -76,7 +76,7 @@ public class CommandPlay extends Command {
             query.insert(0, searchType.getSearchPrefix());
         }
         if(forceJoin && BotUtils.isOwner(e.getMember())){
-            if(e.getMember().getVoiceState().inVoiceChannel()){
+            if(e.getMember().getVoiceState().inAudioChannel()){
                 e.getSelfMember().getGuild().getAudioManager().openAudioConnection(e.getMember().getVoiceState().getChannel());
             }
         }

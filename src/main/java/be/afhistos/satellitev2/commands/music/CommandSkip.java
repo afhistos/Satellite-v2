@@ -3,6 +3,7 @@ package be.afhistos.satellitev2.commands.music;
 import be.afhistos.satellitev2.audio.AudioUtils;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 
 public class CommandSkip extends Command {
 
@@ -26,7 +27,7 @@ public class CommandSkip extends Command {
         if(skip > AudioUtils.getInstance().getGuildAudioPlayer(e.getGuild()).scheduler.getQueue().size()){
             e.replyWarning("La playlist n'est pas aussi grande! arrêt de la musique en cours...", message -> {
                 AudioUtils.getInstance().stopMusic(e.getGuild());
-                message.addReaction(e.getClient().getSuccess()).queue();
+                message.addReaction(Emoji.fromUnicode(e.getClient().getSuccess())).queue();
             });
             return;
 

@@ -148,7 +148,7 @@ public class BotUtils {
         StringBuilder output = new StringBuilder();
         URL url = new URL(urlString);
         URLConnection uc = url.openConnection();
-        String contentType = uc.getHeaderField("Content-Type");
+        String contentType = uc.getHeaderField("Content-Type").split(";")[0];
         if(!Objects.equals(contentType, "application/json") || !contentType.equals("application/xml")){
             if(!authorizeNonJsonResponse){
                 return "ErrNonAuthorized";

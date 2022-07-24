@@ -18,10 +18,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audio.hooks.ConnectionListener;
 import net.dv8tion.jda.api.audio.hooks.ConnectionStatus;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.managers.AudioManager;
 import net.dv8tion.jda.internal.utils.Checks;
@@ -301,7 +298,7 @@ public class AudioUtils extends ListenerAdapter {
         }
         return false;
     }
-    public void connectToVoiceChannel(AudioManager audio, VoiceChannel vc, boolean goToFirst){
+    public void connectToVoiceChannel(AudioManager audio, AudioChannel vc, boolean goToFirst){
         if(!audio.isConnected()) {
             audio.openAudioConnection(vc);
             audio.setConnectionListener(new ConnectionListener() {
@@ -371,7 +368,7 @@ public class AudioUtils extends ListenerAdapter {
         manager.scheduler.clearQueue();
         manager.player.destroy();
         musicManagerMap.remove(g.getIdLong());
-        if(g.getSelfMember().getVoiceState().inVoiceChannel()){
+        if(g.getSelfMember().getVoiceState().inAudioChannel()){
             g.getAudioManager().closeAudioConnection();
         }
     }
