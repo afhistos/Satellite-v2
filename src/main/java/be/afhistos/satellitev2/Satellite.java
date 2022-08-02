@@ -42,15 +42,16 @@ public class Satellite implements Runnable{
         utils = new SQLUtils(true);
         waiter = new EventWaiter();
         builder.setPrefix("&");
-        builder.addCommands(new CommandMonitoring(), new CommandStopBot(), new CommandConfinement(), new CommandVulcain(utils),
+        builder.addCommands(new CommandMonitoring(), new CommandStopBot(), new CommandConfinement(),
                 new CommandGetLogs(), new CommandFetchApi());
         builder.addCommands(new CommandBassBoost(), new CommandPlay(),new CommandVolume(),new CommandNowPlaying(),
                 new CommandPlaylist(waiter), new CommandStopMusic(), new CommandSkip(), new CommandShuffle(),
                 new CommandLoop(), new CommandJump(), new CommandPause(),new CommandClearPlaylist(),
-                new CommandEMPManager(), new CommandHelp());
+                new CommandEMPManager());
         builder.setOwnerId("279597100961103872").setCoOwnerIds("378598433314963467");
         builder.setEmojis("\u2705", "\u26a0", "\u274c");
         builder.setListener(new CommandWatcher());
+
         client = builder.build();
         JDABuilder botBuilder = JDABuilder.createLight(StartHandler.getProperties().getProperty("token"));
         EnumSet<GatewayIntent> intents = EnumSet.of(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES
@@ -61,6 +62,7 @@ public class Satellite implements Runnable{
         botBuilder.enableIntents(intents);
         botBuilder.addEventListeners(new EMPEventListener(), client, new AudioUtils());
         botBuilder.setMemberCachePolicy(MemberCachePolicy.ALL);
+        botBuilder.addEventListeners(new CommandVulcain(), new CommandHelp());
         bot = botBuilder.build().awaitReady();
         running = true;
         bot.getPresence().setActivity(Activity.competing("Lego Ninjago"));
