@@ -1,30 +1,39 @@
 package be.afhistos.satellitev2.commands;
 
 import be.afhistos.satellitev2.BotUtils;
+import be.afhistos.satellitev2.StartHandler;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
 
-public class CommandMonitoring extends Command {
+import java.util.ArrayList;
+import java.util.List;
 
-    public CommandMonitoring(){
-        this.name = "monitoring";
-        this.aliases = new String[]{"showcpu", "cpu", "monitor"};
-        this.category= new Category("Divers");
-        this.help = "Affiche l'utilisation des ressources utilisées par le bot. (Propriétaire)";
-        this.ownerCommand = true;
-        this.guildOnly = false;
+public class CommandMonitoring extends ListenerAdapter {
+
+    @Override
+    public void onSlashCommandInteraction(SlashCommandInteractionEvent e) {
+        String command = e.getName();
+        if(command.equals("monitoring")){
+            try {
+                e.reply(BotUtils.getResourcesUsage()).queue();
+            } catch (Exception exception) {
+                e.reply("Impossible de récupérer l'utilisation des ressources allouées à Satellite").queue();
+                exception.printStackTrace();
+            }
+        }
+
     }
 
     @Override
-    protected void execute(CommandEvent e) {
-        e.reactSuccess();
-        try {
-            e.reply(BotUtils.getResourcesUsage());
-        } catch (Exception exception) {
-            e.getMessage().clearReactions().queue();
-            e.reactError();
-            e.reply("Impossible de récupérer l'utilisation des ressources allouées à Satellite");
-            exception.printStackTrace();
-        }
+    public void onGuildReady(GuildReadyEvent event) {
+        List<CommandData> commandData = new ArrayList<>();
+        commandData.add(Commands.slash("monitoring", "Affiche l'utilisation des ressources utilisées par le bot. (Propriétaire)"));
+        event.getGuild().updateCommands().addCommands(commandData).queue();
+
     }
 }

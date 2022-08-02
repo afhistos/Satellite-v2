@@ -42,8 +42,7 @@ public class Satellite implements Runnable{
         utils = new SQLUtils(true);
         waiter = new EventWaiter();
         builder.setPrefix("&");
-        builder.addCommands(new CommandMonitoring(), new CommandStopBot(), new CommandConfinement(),
-                new CommandGetLogs(), new CommandFetchApi());
+        builder.addCommands( new CommandConfinement());
         builder.addCommands(new CommandBassBoost(), new CommandPlay(),new CommandVolume(),new CommandNowPlaying(),
                 new CommandPlaylist(waiter), new CommandStopMusic(), new CommandSkip(), new CommandShuffle(),
                 new CommandLoop(), new CommandJump(), new CommandPause(),new CommandClearPlaylist(),
@@ -62,7 +61,7 @@ public class Satellite implements Runnable{
         botBuilder.enableIntents(intents);
         botBuilder.addEventListeners(new EMPEventListener(), client, new AudioUtils());
         botBuilder.setMemberCachePolicy(MemberCachePolicy.ALL);
-        botBuilder.addEventListeners(new CommandVulcain(), new CommandHelp());
+        botBuilder.addEventListeners(new CommandVulcain(),new CommandStopBot(),new CommandGetLogs(),new CommandFetchApi(),new CommandMonitoring());
         bot = botBuilder.build().awaitReady();
         running = true;
         bot.getPresence().setActivity(Activity.competing("Lego Ninjago"));
