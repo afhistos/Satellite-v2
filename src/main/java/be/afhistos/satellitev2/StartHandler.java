@@ -7,7 +7,9 @@ import org.java_websocket.server.WebSocketServer;
 
 import javax.security.auth.login.LoginException;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,10 +27,15 @@ public class StartHandler {
 
 
     public static void main(String[] args) throws IOException, LoginException, InterruptedException, SQLException {
-
         startTime = System.currentTimeMillis();
+        boolean isDev = Arrays.asList(args).contains("--dev");
         pool = Executors.newCachedThreadPool();
-        props.load(StartHandler.class.getResourceAsStream("/props.properties"));
+        if(isDev){
+            BotUtils.log(LogLevel.SYSTEM, "Le mode développeur est activé.", true, false);
+            props.load(StartHandler.class.getResourceAsStream("/props.dev.properties"));
+        }else{
+            props.load(StartHandler.class.getResourceAsStream("/props.properties"));
+        }
         BotUtils.log(LogLevel.INFO, "Démarrage de Satellite v"+props.getProperty("version"), true, false);
 
         logFile = new File("Satellite-log-"+BotUtils.getFullTimestamp(startTime)+".log");
@@ -37,7 +44,7 @@ public class StartHandler {
         }else{
             BotUtils.log(LogLevel.ERROR,"Impossible de créer le fichier de `CommandWatcher` ("+logFile.getName()+")", true, false);
         }
-        logWriter=  new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile), "UTF-8"));
+        logWriter=  new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile), StandardCharsets.UTF_8));
         BotUtils.log(LogLevel.INFO,"Démarrage des threads nécessaires...", true, true);
         consoleRunnable = new ConsoleRunnable();
         pool.execute(consoleRunnable);
@@ -49,18 +56,6 @@ public class StartHandler {
 
 
 
-    }
-
-    public static Runnable getSatelliteRunnable() {
-        return satellite;
-    }
-
-    public static Runnable getConsoleRunnable() {
-        return consoleRunnable;
-    }
-
-    public static Runnable getVulcainRunnable() {
-        return vulcain;
     }
 
     public static Properties getProperties() {
@@ -77,9 +72,7 @@ public class StartHandler {
 
     public static long getStartTime() {return startTime;}
 
-    public static WebSocketServer getServer() {
-        return vulcain;
-    }
+
 
     public static ExecutorService getThreadPool() {
         return pool;
