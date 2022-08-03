@@ -3,8 +3,10 @@ package be.afhistos.satellitev2.commands.music;
 import be.afhistos.satellitev2.audio.AudioUtils;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
-public class CommandShuffle extends Command {
+public class CommandShuffle extends SlashCommand {
 
     public CommandShuffle(){
         this.name = "shuffle";
@@ -15,8 +17,8 @@ public class CommandShuffle extends Command {
     }
 
     @Override
-    protected void execute(CommandEvent e) {
+    protected void execute(SlashCommandEvent e) {
         AudioUtils.getInstance().getGuildAudioPlayer(e.getGuild()).scheduler.shuffle();
-        e.reactSuccess();
+        e.reply("La playlist à été mélangée avec succès!").queue();
     }
 }

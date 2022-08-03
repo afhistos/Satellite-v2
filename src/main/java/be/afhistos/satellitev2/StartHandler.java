@@ -48,7 +48,7 @@ public class StartHandler {
         BotUtils.log(LogLevel.INFO,"Démarrage des threads nécessaires...", true, true);
         consoleRunnable = new ConsoleRunnable();
         pool.execute(consoleRunnable);
-        satellite = new Satellite(startTime);
+        satellite = new Satellite(startTime, isDev);
         pool.execute(satellite);
         vulcain = new VulcainServer(44444);
         pool.execute(vulcain);

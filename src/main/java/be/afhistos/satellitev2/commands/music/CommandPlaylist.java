@@ -5,6 +5,8 @@ import be.afhistos.satellitev2.audio.AudioUtils;
 import be.afhistos.satellitev2.audio.GuildMusicManager;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jagrosh.jdautilities.menu.Paginator;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -12,14 +14,13 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
-public class CommandPlaylist extends Command {
+public class CommandPlaylist extends SlashCommand {
 
     private final Paginator.Builder pBuilder;
     public CommandPlaylist(EventWaiter waiter){
         this.name = "playlist";
         this.aliases = new String[]{"pl", "playl", "plist","listSongs"};
         this.category = new Category("Musique");
-        this.arguments = "[N° de page || \"tiny\"]";
         this.guildOnly = true;
         this.help = "Affiche les 10 prochains morceaux de la playlist.";
         pBuilder = new Paginator.Builder().setColumns(1)
@@ -35,20 +36,7 @@ public class CommandPlaylist extends Command {
     }
 
     @Override
-    protected void execute(CommandEvent e) {
-        if(!e.getArgs().isEmpty() && e.getArgs().equalsIgnoreCase("tiny")){
-            e.reply(AudioUtils.getInstance().getPlaylistString(e.getGuild()));
-            return;
-        }
-        int page = 1;
-        if(!e.getArgs().isEmpty()){
-            try{
-                page = Integer.parseInt(e.getArgs());
-            }catch (NumberFormatException ex) {
-                e.reply(e.getClient().getError() + "`" + e.getArgs() + "` n'est pas un nombre valide!");
-                return;
-            }
-        }
+    protected void execute(SlashCommandEvent e) {
         pBuilder.clearItems();
         GuildMusicManager musicManager = AudioUtils.getInstance().getGuildAudioPlayer(e.getGuild());
         AudioTrack current = musicManager.player.getPlayingTrack();
@@ -64,11 +52,11 @@ public class CommandPlaylist extends Command {
             duration += track.getDuration();
         }
         Paginator p = pBuilder.setColor(BotUtils.getDefaultColor()).setText(e.getClient().getSuccess()+" Playlist de "+
-                e.getSelfMember().getEffectiveName()+" dans le serveur **"+e.getGuild().getName()+
+                e.getGuild().getSelfMember().getEffectiveName()+" dans le serveur **"+e.getGuild().getName()+
                 "**:\nTaille de la playlist: "+ (queue.size()+1)+
                 "\n  Durée de la playlist: "+ BotUtils.getTimestamp(duration, false))
-                .setUsers(e.getAuthor()).build();
-        p.paginate(e.getChannel(), page);
+                .setUsers(e.getUser()).build();
+        p.paginate(e.getChannel(), 1);
 
     }
 }

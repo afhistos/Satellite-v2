@@ -3,8 +3,10 @@ package be.afhistos.satellitev2.commands.music;
 import be.afhistos.satellitev2.audio.AudioUtils;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
-public class CommandClearPlaylist extends Command {
+public class CommandClearPlaylist extends SlashCommand {
 
     public CommandClearPlaylist(){
         this.name = "clearpl";
@@ -15,8 +17,8 @@ public class CommandClearPlaylist extends Command {
     }
 
     @Override
-    protected void execute(CommandEvent e) {
+    protected void execute(SlashCommandEvent e) {
         AudioUtils.getInstance().getGuildAudioPlayer(e.getGuild()).scheduler.clearQueue();
-        e.reply("La playlist à bien été vidée!");
+        e.reply("La playlist à bien été vidée!").queue();
     }
 }

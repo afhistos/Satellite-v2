@@ -36,21 +36,25 @@ public class Satellite implements Runnable{
     private static SQLUtils utils;
     private long loadedTime;
 
-    public Satellite(long st) throws LoginException, InterruptedException, SQLException {
+    public Satellite(long st, boolean isDev) throws LoginException, InterruptedException, SQLException {
         BotUtils.CAT_PERMISSIONS_DENY =  new LinkedList<>();
         BotUtils.CAT_PERMISSIONS_DENY.add(Permission.VIEW_CHANNEL);
         utils = new SQLUtils(true);
         waiter = new EventWaiter();
-        builder.setPrefix("&");
-        builder.addCommands( new CommandConfinement());
-        builder.addCommands(new CommandBassBoost(), new CommandPlay(),new CommandVolume(),new CommandNowPlaying(),
+        if(isDev){
+            builder.setPrefix("&");
+        }else{
+            builder.setPrefix("²");
+        }
+        builder.addSlashCommands(new CommandMonitoring(), new CommandStopBot(), new CommandConfinement(), new CommandVulcain(utils),
+                new CommandGetLogs(), new CommandFetchApi());
+        builder.addSlashCommands(new CommandBassBoost(), new CommandPlay(),new CommandVolume(),new CommandNowPlaying(),
                 new CommandPlaylist(waiter), new CommandStopMusic(), new CommandSkip(), new CommandShuffle(),
                 new CommandLoop(), new CommandJump(), new CommandPause(),new CommandClearPlaylist(),
                 new CommandEMPManager());
         builder.setOwnerId("279597100961103872").setCoOwnerIds("378598433314963467");
         builder.setEmojis("\u2705", "\u26a0", "\u274c");
         builder.setListener(new CommandWatcher());
-
         client = builder.build();
         JDABuilder botBuilder = JDABuilder.createLight(StartHandler.getProperties().getProperty("token"));
         EnumSet<GatewayIntent> intents = EnumSet.of(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES
@@ -61,7 +65,6 @@ public class Satellite implements Runnable{
         botBuilder.enableIntents(intents);
         botBuilder.addEventListeners(new EMPEventListener(), client, new AudioUtils());
         botBuilder.setMemberCachePolicy(MemberCachePolicy.ALL);
-        botBuilder.addEventListeners(new CommandVulcain(),new CommandStopBot(),new CommandGetLogs(),new CommandFetchApi(),new CommandMonitoring());
         bot = botBuilder.build().awaitReady();
         running = true;
         bot.getPresence().setActivity(Activity.competing("Lego Ninjago"));

@@ -3,93 +3,85 @@ package be.afhistos.satellitev2.commands;
 import be.afhistos.satellitev2.BotUtils;
 import be.afhistos.satellitev2.sql.QueryResult;
 import be.afhistos.satellitev2.sql.SQLUtils;
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandClient;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
-public class CommandVulcain extends ListenerAdapter {
+public class CommandVulcain extends SlashCommand {
 
     private SQLUtils utils;
+
+    public CommandVulcain(SQLUtils utils){
+        this.utils = utils;
+        this.name = "vulcain";
+        this.arguments = "`rien`/new/show/delete";
+        List<OptionData> data = new ArrayList<>();
+        data.add(new OptionData(OptionType.STRING, "action", "Permet de gérer ses identifiants Vulcain", true));
+        this.options = data;
+        this.category= new Category("Divers");
+        this.help = "Permet d'initialiser la mise en place de Vulcain";
+        this.ownerCommand = false;
+        this.guildOnly = false;
+        this.botMissingPermMessage = "Ganymède doit pouvoir vous envoyer un message privé pour utiliser cette commande!";
+    }
+
     @Override
-    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        String command = event.getName();
-        if(command.equals("vulcain")){
-            if(!BotUtils.isOwner(event.getMember())){
-                event.reply(":warning: Seuls les propriétaires de serveurs peuvent utiliser cette commande.").queue();
-                return;
+    protected void execute(SlashCommandEvent event) {
+        String action = event.getOption("action") == null ? "" : event.getOption("action").getAsString();
+        if(!BotUtils.isOwner(event.getMember())){
+            event.reply(":warning: Seuls les propriétaires de serveurs peuvent utiliser cette commande.")
+                    .setEphemeral(true)
+                    .queue();
+            return;
+        }
+        QueryResult qr = utils.getData("SELECT id FROM auth WHERE user_id = ?", event.getUser().getId());
+        boolean alreadyLinked = qr.getRowsCount() > 0;
+        qr.close();
+        if(action.isEmpty()){
+            event.reply(getHelpMessage(alreadyLinked)).setEphemeral(true).queue();
+        }
+        switch (action){
+            case "new":
+                if(alreadyLinked){
+                    utils.execute("DELETE FROM auth WHERE id = ?", qr.getValue(0,0));
+                }
+                UUID uuid = UUID.randomUUID();
+                utils.execute("INSERT INTO auth (user_id, token, is_admin) VALUES (?, ?, ?)",
+                        event.getMember().getId(),
+                        uuid.toString(),
+                        BotUtils.isOwner(event.getMember().getId()));
+                event.reply("**Token**: ||"+ uuid +"||\nGarde ce token secret!").setEphemeral(true).queue();
+                break;
+            case "show":{
+                if(!alreadyLinked){
+                    event.reply("Vous n'avez pas encore de token actif! `²vulcain new`").setEphemeral(true).queue();
+                }else{
+                    qr = utils.getData("SELECT token FROM auth WHERE user_id = ?", event.getUser().getId());
+                    final String retreivedUuid = qr.getValue(0,0);
+                    event.reply("**Token**: ||"+ retreivedUuid +"||\nGarde ce token secret!").setEphemeral(true).queue();
+
+                }
+                break;
             }
-            QueryResult qr = utils.getData("SELECT id FROM auth WHERE user_id = ?", event.getUser().getId());
-            boolean alreadyLinked = qr.getRowsCount() > 0;
-            qr.close();
-            if(event.getOptions().size() == 0){
-                event.reply(getHelpMessage(alreadyLinked)).queue();
+            case "delete":{
+                if(!alreadyLinked){
+                    event.reply("Vous n'avez pas encore de token actif! `²vulcain new`").setEphemeral(true).queue();
+                }else{
+                    utils.execute("DELETE FROM auth WHERE user_id = ?", event.getUser().getId());
+                    event.reply("Votre token à été supprimé.").setEphemeral(true);
+                }
+                break;
             }
-            switch (event.getOption("action").getAsString()){
-                case "new":
-                    if(alreadyLinked){
-                        utils.execute("DELETE FROM auth WHERE id = ?", qr.getValue(0,0));
-                    }
-                    UUID uuid = UUID.randomUUID();
-                    utils.execute("INSERT INTO auth (user_id, token, is_admin) VALUES (?, ?, ?)",
-                            event.getUser().getId(),
-                            uuid.toString(),
-                            BotUtils.isOwner(event.getUser().getId()));
-                    event.getUser().openPrivateChannel().flatMap(channel ->
-                                    channel.sendMessage("**Token**: "+ uuid +"\nCe message sera supprimé <t:"+ (Instant.now().getEpochSecond()+ 600)+":R>"))
-                            .delay(Duration.ofMinutes(10))
-                            .flatMap(Message::delete)
-                            .queue();
-                    break;
-                case "show":{
-                    if(alreadyLinked) {
-                        qr = utils.getData("SELECT token FROM auth WHERE user_id = ?", event.getUser().getId());
-                        final String retreivedUuid = qr.getValue(0,0);
-                        event.getUser().openPrivateChannel().flatMap(channel ->
-                                        channel.sendMessage("**Token**: "+ retreivedUuid +"\nCe message sera supprimé <t:"+ (Instant.now().getEpochSecond() + 600)+":R>"))
-                                .delay(Duration.ofMinutes(10))
-                                .flatMap(Message::delete)
-                                .queue();
-                    } else {
-                        event.reply("Vous n'avez pas encore de token actif! `²vulcain new`").queue();
-                    }
-                    break;
-                }
-                case "delete":{
-                    if(alreadyLinked) {
-                        utils.execute("DELETE FROM auth WHERE user_id = ?", event.getUser().getId());
-                        event.reply("Votre token à été supprimé.").queue();
-                    } else {
-                        event.reply("Vous n'avez pas encore de token actif! `²vulcain new`").queue();
-                    }
-                    break;
-                }
-                default:{
-                    event.reply(getHelpMessage(alreadyLinked)).queue();
-                }
+            default:{
+                event.reply(getHelpMessage(alreadyLinked)).setEphemeral(true).queue();
             }
         }
     }
-
-
-    @Override
-    public void onGuildReady(GuildReadyEvent event) {
-        List<CommandData> commandData = new ArrayList<>();
-        commandData.add(Commands.slash("vulcain", "Permet d'initialiser la mise en place de Vulcain").addOptions(new OptionData(OptionType.STRING, "action",  "new/show/delete", true)));
-        event.getGuild().updateCommands().addCommands(commandData).queue();
-    }
-
 
     private String getHelpMessage(boolean alreadyLinked) {
         if(alreadyLinked){

@@ -1,37 +1,31 @@
 package be.afhistos.satellitev2.commands;
 
 import be.afhistos.satellitev2.StartHandler;
-import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import com.jagrosh.jdautilities.command.Command;
+import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
-import java.util.ArrayList;
-import java.util.List;
+public class CommandGetLogs extends SlashCommand {
 
-public class CommandGetLogs extends ListenerAdapter {
-
-
-    @Override
-    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        String command = event.getName();
-        if(command.equals("getlogs")){
-            if(StartHandler.getLogFile().exists()){
-                event.reply("Voici les dernières logs:"+StartHandler.getLogFile()+ StartHandler.getLogFile().getName()).queue();
-
-            }else{
-                event.reply("Le fichier des logs n'existe pas!").queue();
-            }
-        }
-
+    public CommandGetLogs(){
+        this.name = "getlogs";
+        this.aliases = new String[]{"getLogs", "logs", "printLogs", "printlogs"};
+        this.category= new Category("Divers");
+        this.help = "Permet d'obtenir les dernieres logs";
+        this.ownerCommand = true;
+        this.guildOnly = false;
     }
 
     @Override
-    public void onGuildReady(GuildReadyEvent event) {
-        List<CommandData> commandData = new ArrayList<>();
-        commandData.add(Commands.slash("getlogs", "Permet d'obtenir les dernieres logs"));
-        event.getGuild().updateCommands().addCommands(commandData).queue();
+    protected void execute(SlashCommandEvent event) {
+        if(StartHandler.getLogFile().exists()){
+            event.replyFile(StartHandler.getLogFile(), StartHandler.getLogFile().getName())
+                    .setEphemeral(true)
+                    .queue();
 
+        }else{
+            event.reply("Le fichier des logs n'existe pas!").setEphemeral(true).queue();
+        }
     }
 }

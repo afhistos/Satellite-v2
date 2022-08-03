@@ -3,9 +3,16 @@ package be.afhistos.satellitev2.commands.music;
 import be.afhistos.satellitev2.audio.AudioUtils;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
-public class CommandSkip extends Command {
+import java.util.ArrayList;
+import java.util.List;
+
+public class CommandSkip extends SlashCommand {
 
     public CommandSkip(){
         this.name = "skip";
@@ -13,28 +20,26 @@ public class CommandSkip extends Command {
         this.guildOnly = true;
         this.category = new Category("Musique");
         this.arguments = "[nombre de sauts]";
+        List<OptionData> data = new ArrayList<>();
+        data.add(new OptionData(OptionType.INTEGER, "skips", "Nombre de morceaux à sauter"));
+        this.options = data;
     }
     @Override
-    protected void execute(CommandEvent e) {
-        int skip = 1;
-        if(!e.getArgs().isEmpty()){
-            try{
-                skip = Integer.parseInt(e.getArgs());
-            }catch (NumberFormatException ign){
-                e.reply(e.getClient().getError()+" Nombre invalide! Saut de 1 morceau...");
-            }
+    protected void execute(SlashCommandEvent e) {
+        int skip;
+        if(e.getOption("skips").getAsInt() == 0){
+            skip = 1;
+        }else{
+            skip = e.getOption("skips").getAsInt();
         }
         if(skip > AudioUtils.getInstance().getGuildAudioPlayer(e.getGuild()).scheduler.getQueue().size()){
-            e.replyWarning("La playlist n'est pas aussi grande! arrêt de la musique en cours...", message -> {
-                AudioUtils.getInstance().stopMusic(e.getGuild());
-                message.addReaction(Emoji.fromUnicode(e.getClient().getSuccess())).queue();
-            });
+            e.reply(e.getClient().getWarning() + " La playlist n'est pas aussi grande! arrêt de la musique en cours...").queue();
             return;
 
         }
         for (int i = 1; i <= skip; i++) {
             AudioUtils.getInstance().skipSong(e.getGuild());
         }
-        e.reply("Saut de "+skip+" morceau(x).");
+        e.reply("Saut de "+skip+" morceau(x).").queue();
     }
 }

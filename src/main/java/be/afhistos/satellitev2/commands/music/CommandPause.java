@@ -4,8 +4,10 @@ import be.afhistos.satellitev2.audio.AudioUtils;
 import be.afhistos.satellitev2.audio.GuildMusicManager;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
-public class CommandPause extends Command {
+public class CommandPause extends SlashCommand {
 
     public CommandPause(){
         this.name = "pause";
@@ -15,10 +17,11 @@ public class CommandPause extends Command {
     }
 
     @Override
-    protected void execute(CommandEvent e) {
+    protected void execute(SlashCommandEvent e) {
         GuildMusicManager manager  = AudioUtils.getInstance().getGuildAudioPlayer(e.getGuild());
-        manager.player.setPaused(!manager.player.isPaused());
-        e.reactSuccess();
+        boolean status = !manager.player.isPaused();
+        manager.player.setPaused(status);
+        e.reply(status ? "Mise en pause!" : "Reprise de la lecture!").queue();
 
     }
 }
