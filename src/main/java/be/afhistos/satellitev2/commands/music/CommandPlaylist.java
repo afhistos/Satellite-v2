@@ -51,11 +51,12 @@ public class CommandPlaylist extends SlashCommand {
         for(AudioTrack track : queue){
             duration += track.getDuration();
         }
-        Paginator p = pBuilder.setColor(BotUtils.getDefaultColor()).setText(e.getClient().getSuccess()+" Playlist de "+
+        Paginator p = pBuilder.setColor(BotUtils.getDefaultColor())
+                .setUsers(e.getUser()).build();
+        e.reply(e.getClient().getSuccess()+" Playlist de "+
                 e.getGuild().getSelfMember().getEffectiveName()+" dans le serveur **"+e.getGuild().getName()+
                 "**:\nTaille de la playlist: "+ (queue.size()+1)+
-                "\n  Durée de la playlist: "+ BotUtils.getTimestamp(duration, false))
-                .setUsers(e.getUser()).build();
+                "\n  Durée de la playlist: "+ BotUtils.getTimestamp(duration, false)).queue();
         p.paginate(e.getChannel(), 1);
 
     }

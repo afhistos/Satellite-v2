@@ -37,7 +37,7 @@ public class CommandEMPManager extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent e) {
-        if(e.getOptions().isEmpty()){//Aucun argument
+        if(e.getOptions().isEmpty() || e.getOption("action").getAsString().equals("help")){//Aucun argument
             e.reply(getCommandHelp()).setEphemeral(true).queue();
             return;
         }

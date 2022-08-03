@@ -47,10 +47,10 @@ public class CommandPlay extends SlashCommand {
         AudioUtils.getInstance().getGuildAudioPlayer(e.getGuild());//Load GuildAudioPlayer before playing
 
         //Handle args
-        boolean insertFirst = e.getOption("insert").getAsBoolean();
+        boolean insertFirst = e.optBoolean("insert");
 
         String timecode = "0";
-        int i=1; //Default value
+        int i = e.getOption("count") == null ? 1 : e.getOption("count").getAsInt(); //Default value
         String first;
         String query = e.getOption("query").getAsString();
         if(query.startsWith("http://") || query.startsWith("https://")){
@@ -59,15 +59,13 @@ public class CommandPlay extends SlashCommand {
                 timecode = timecode.replaceAll("[^0-9]", "");
             }
         }else{
-            first = query.split("\\s")[0];
-            if(first.matches("[0-9]")){
-                i = Integer.parseInt(first);
-            }
-            query = "yt" + query;
-        }
 
+            query = "ytsearch:" + query;
+        }
+        System.out.println("TAILLE: " + i);
         long pos = TimeUnit.SECONDS.toMillis(Long.parseLong(timecode));
-        AudioUtils.getInstance().loadAndPlay(e.getTextChannel(), query.toString(), i, insertFirst, false, pos);
+        AudioUtils.getInstance().loadAndPlay(e.getTextChannel(), query, i, insertFirst, false, pos);
+        e.deferReply().queue();
 
 
     }

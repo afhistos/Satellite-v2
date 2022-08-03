@@ -23,7 +23,10 @@ public class CommandConfinement extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent e) {
-        if(!e.getGuild().getId().equals("484372589951582218")){return;}
+        if(!e.getGuild().getId().equals("484372589951582218")){
+            e.deferReply();
+            return;
+        }
         //First, remove all roles from member
         e.getMember().getRoles().forEach(role -> {
             e.getGuild().removeRoleFromMember(e.getMember(), role).queue();
