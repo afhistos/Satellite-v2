@@ -18,6 +18,7 @@ public class CommandStopBot extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent e) {
+        e.reply("Arrêt...").queue();
         Satellite.setRunning(false);
     }
 }

@@ -67,7 +67,8 @@ public class Satellite implements Runnable{
         botBuilder.setMemberCachePolicy(MemberCachePolicy.ALL);
         bot = botBuilder.build().awaitReady();
         running = true;
-        bot.getPresence().setActivity(Activity.competing("Lego Ninjago"));
+        bot.getPresence().setActivity(Activity.playing("Now with '/' !"));
+
         loadedTime = System.currentTimeMillis();
         BotUtils.log(LogLevel.INFO, "Le bot est prêt à l'utilisation.\n"+ TextColor.BRIGHT_CYAN+"Temps de chargement: "
                 +TextColor.BRIGHT_BLUE+ BotUtils.getTimestamp(loadedTime - st, true), true, false);
@@ -83,7 +84,6 @@ public class Satellite implements Runnable{
                 break;
             }
         }
-        System.out.println("Calling ShutdownBot from Satellite class");
         Thread t = new Thread(new ShutdownBot(), "Thread-shutdown");
         t.start();
     }
