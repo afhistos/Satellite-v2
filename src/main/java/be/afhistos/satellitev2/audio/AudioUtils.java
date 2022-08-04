@@ -2,6 +2,7 @@ package be.afhistos.satellitev2.audio;
 
 import be.afhistos.satellitev2.DefaultEmbed;
 import be.afhistos.satellitev2.Satellite;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.sedmelluq.discord.lavaplayer.filter.equalizer.EqualizerFactory;
 import com.sedmelluq.discord.lavaplayer.player.AudioConfiguration;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
@@ -21,7 +22,6 @@ import net.dv8tion.jda.api.audio.hooks.ConnectionStatus;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.managers.AudioManager;
-import net.dv8tion.jda.internal.utils.Checks;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -196,51 +196,53 @@ public class AudioUtils extends ListenerAdapter {
     }
 
     /**
-     * @param chan The text channel where the result will be written
+     * @param e The event, used to reply (SlashCommand)
      * @param trackUrl the trackUrl (if start with 'ytsearch:', it is a youtube search)
      * @param limit if it is a youtube search, the number of track loaded
      * @param addFirst set to true to add song on top of queue
      * @param clearPlaylist set to true to clear playlist before adding requested song(s)
      * @param pos play the track at saved pos (only if queue is empty)
      */
-    public void loadAndPlay(final TextChannel chan, final String trackUrl, int limit, boolean addFirst, boolean clearPlaylist, long pos){
-        GuildMusicManager musicManager = getGuildAudioPlayer(chan.getGuild());
+    public void loadAndPlay(final SlashCommandEvent e, final String trackUrl, int limit, boolean addFirst, boolean clearPlaylist, long pos){
+        GuildMusicManager musicManager = getGuildAudioPlayer(e.getGuild());
         if(clearPlaylist){
             musicManager.scheduler.clearQueue();
         }
         playerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
-                chan.sendMessage("Ajout de "+track.getInfo().title+" à la file d'attente. Taille de la playlist: " +
-                        (getGuildAudioPlayer(chan.getGuild()).scheduler.getQueue().size() + 1)+ " morceau(x).").queue();
                 track.setPosition(pos);
-                play(musicManager, track, addFirst);
+                if(addFirst){
+                    musicManager.scheduler.queueFirst(track);
+                }else{
+                    musicManager.scheduler.queue(track);
+                }
+                e.reply("Ajout de "+track.getInfo().title+" à la file d'attente. Taille de la playlist: " +
+                        (musicManager.scheduler.getQueue().size() + 1)+ " morceau(x).").queue();
             }
 
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
-
                 String artists = "";
                 String artist;
-                String msg;
                 if(limit == 1 && playlist.isSearchResult()){
                     AudioTrack track = playlist.getTracks().get(0);
-                    getGuildAudioPlayer(chan.getGuild()).scheduler.queue(track);
-                    msg = "Ajout de "+track.getInfo().title+" à la file d'attente. Taille de la playlist: "+
-                            (getGuildAudioPlayer(chan.getGuild()).scheduler.getQueue().size() + 1)+ " morceau(x).";
+                    if(addFirst){
+                        musicManager.scheduler.queueFirst(track);
+                    }else{
+                        musicManager.scheduler.queue(track);
+                    }
+                    e.reply("Ajout de "+track.getInfo().title+" à la file d'attente. Taille de la playlist: "+
+                            (musicManager.scheduler.getQueue().size() + 1)+ " morceau(x).").queue();
                 }else{
-                    int i = 0;
                     ArrayList<AudioTrack> tracks = new ArrayList<>();
-                    for(AudioTrack t : playlist.getTracks()){
-                        if(i >= limit && playlist.isSearchResult()){
-                            break;
-                        }
-                        tracks.add(t);
-                        artist = t.getInfo().author;
+                    for (int i = 0; i < limit && i < playlist.getTracks().size(); i++) {
+                        AudioTrack currentTrack = playlist.getTracks().get(i);
+                        tracks.add(currentTrack);
+                        artist = currentTrack.getInfo().author;
                         artist = artist.replace(" - Topic", "");
                         if(!artists.contains(artist) && i <= 5){
                             artists = artists.concat(artist).concat(", ");
-                            i++;
                         }
                     }
                     if(addFirst){
@@ -256,24 +258,21 @@ public class AudioUtils extends ListenerAdapter {
                     if(artists.endsWith(", ")){
                         artists = artists.substring(0, artists.length() - 2);
                     }
-                    msg = "Ajout de "+tracks.size()+" morceau(x) à la playlist, comprennant "+artists+
-                            (i>5 ? " et d'autres": " et c'est tout");
+                    e.reply("Ajout de "+tracks.size()+" morceau(x) à la playlist, comprennant "+artists).queue();
 
                 }
-                chan.sendMessage(msg).queue();
             }
 
             @Override
             public void noMatches() {
-                chan.sendMessage("Aucun morceau n'a été trouvé à l'adresse __"+trackUrl+"__").queue();
+                e.reply("Aucun morceau n'a été trouvé à l'adresse __"+trackUrl+"__").queue();
             }
 
             @Override
-            public void loadFailed(FriendlyException e) {
-                chan.sendMessage("Impossible de jouer le morceau :(\n"+e.getMessage()).queue();
+            public void loadFailed(FriendlyException ex) {
+                e.reply("Impossible de jouer le morceau :(\n"+ex.getMessage()).queue();
             }
-        }).isDone();
-
+        });
     }
 
     private void play(GuildMusicManager musicManager, AudioTrack track, boolean addFirst) {

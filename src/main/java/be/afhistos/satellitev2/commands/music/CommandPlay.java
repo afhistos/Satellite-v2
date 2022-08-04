@@ -62,11 +62,8 @@ public class CommandPlay extends SlashCommand {
 
             query = "ytsearch:" + query;
         }
-        System.out.println("TAILLE: " + i);
         long pos = TimeUnit.SECONDS.toMillis(Long.parseLong(timecode));
-        AudioUtils.getInstance().loadAndPlay(e.getTextChannel(), query, i, insertFirst, false, pos);
-        e.deferReply().queue();
-
+        AudioUtils.getInstance().loadAndPlay(e, query, i, insertFirst, false, pos);
 
     }
 
