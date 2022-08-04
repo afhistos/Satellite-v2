@@ -27,7 +27,7 @@ public class CommandSkip extends SlashCommand {
     @Override
     protected void execute(SlashCommandEvent e) {
         int skip;
-        if(e.getOption("skips").getAsInt() == 0){
+        if(e.getOption("skips") == null || e.getOption("skips").getAsInt() == 0){
             skip = 1;
         }else{
             skip = e.getOption("skips").getAsInt();
